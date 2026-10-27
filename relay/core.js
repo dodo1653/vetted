@@ -13,7 +13,7 @@ const KEEP_MS = 65 * 60_000       // launches older than this leave the feed (th
 const MAX = 3000
 
 export class Feed {
-  constructor() { this.coins = new Map(); this.seq = 0; this.events = 0; this.pinned = new Set() }   // pinned = launched on vetted, kept for good
+  constructor() { this.coins = new Map(); this.seq = 0; this.events = 0; this.pinned = new Set(); this.tape = [] }   // tape = the latest launches and real trades, for the live bar   // pinned = launched on vetted, kept for good
 
   // one websocket message's logs (a single transaction)
   onLogs(logs, slot) {
@@ -47,6 +47,7 @@ export class Feed {
       meta: null, metaTried: 0, seq: ++this.seq, ticks: [],
     })
     if (this.coins.size > MAX) { for (const k of this.coins.keys()) { if (!this.pinned.has(k)) { this.coins.delete(k); break } } }
+    this.tape.push({ k: "c", w: (creator || user).slice(0, 6), s: symbol.slice(0, 12), m: mint, img: null, at: Date.now() }); if (this.tape.length > 60) this.tape.shift()
   }
   onTrade(b, slot) {
     const c = this.coins.get(b58(b.subarray(8, 40)))
@@ -58,6 +59,7 @@ export class Feed {
     c.ticks.push([Date.now(), c.vTok > 0 ? c.vSol / c.vTok : 0, +sol.toFixed(4), buy ? 1 : 0]); if (c.ticks.length > 4000) c.ticks.splice(0, 1000)
     c.peak = Math.max(c.peak || 0, c.vTok > 0 ? (c.vSol / c.vTok) * 1e9 : 0)
     if (buy) { c.buys++; c.buyers.add(user) } else c.sells++
+    if (sol >= 0.1) { this.tape.push({ k: buy ? "b" : "s", w: user.slice(0, 6), s: c.symbol.slice(0, 12), m: c.mint, sol: +sol.toFixed(3), at: Date.now() }); if (this.tape.length > 60) this.tape.shift() }
     if (user === c.dev) {
       if (buy) { c.devTok += tok; c.devBuySol += sol } else { c.devTok = Math.max(0, c.devTok - tok); c.devSellSol += sol }
       c.devPeak = Math.max(c.devPeak, c.devTok)

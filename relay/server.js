@@ -124,10 +124,14 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
     if (u.pathname === "/v1/board") {
       const n = Math.min(120, +(u.searchParams.get("n") || 80)), rows = []
       for (const c of feed.coins.values()) if (!c.done && c.buyers.size >= 3 && Date.now() - c.at > 6000) rows.push(c)
-      rows.sort((a, b) => b.at - a.at)
+      const sort = u.searchParams.get("sort") || "bump"
+      if (sort === "mc") rows.sort((a, b) => b.vSol / b.vTok - a.vSol / a.vTok)
+      else if (sort === "new") rows.sort((a, b) => b.at - a.at)
+      else rows.sort((a, b) => (b.ticks.at(-1)?.[0] || b.at) - (a.ticks.at(-1)?.[0] || a.at))   // bump order: latest trade first
       const out = await Promise.all(rows.slice(0, n).map(boardRow))
       const here = await Promise.all([...feed.pinned].map((m) => feed.coins.get(m)).filter(Boolean).sort((a, b) => b.at - a.at).slice(0, 30).map(boardRow))
-      return json({ now: Date.now(), live, sol, coins: out, here })
+      const tape = feed.tape.slice(-12).map((e) => ({ ...e, img: feed.coins.get(e.m)?.meta?.image || null }))
+      return json({ now: Date.now(), live, sol, coins: out, here, tape })
     }
     if (u.pathname === "/v1/coin") {
       const c = feed.coins.get(u.searchParams.get("mint") || "")
