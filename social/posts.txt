@@ -34,7 +34,7 @@ copies launched anywhere else on pump.fun get caught live, marked COPY, and poin
 the old pump.fun look, from when it was at its prime. every dev graded from their on-chain record.
 
 $GARLIC
-CA: <set on launch>
+CA: Hv5pshREGYeSg5zjJi2rgBndbwDZttz9d3ZFgynipump
 
 FOLLOW-UP (after launch; use the site's live counter, real numbers only)
 garlic caught <N> vamps today. every one of them now points back to the coin it copied.
