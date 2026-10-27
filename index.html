@@ -209,7 +209,7 @@
 import P from './project.config.js'
 const $ = (id) => document.getElementById(id)
 const Q = new URLSearchParams(location.search)
-const RELAY = Q.get('relay') || 'https://vetted-relay.trenchcounty.workers.dev'
+const RELAY = Q.get('relay') || 'https://vetted-relay.vetted-relay.workers.dev'
 const get = (path, q = '') => fetch(Q.get('relay') ? `${RELAY}/v1/${path}?${q}` : `/api/r?path=${path}&${q}`, { cache: 'no-store' }).then((r) => r.json())
 const post = (path, body) => fetch(`${RELAY}/v1/${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json())
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))

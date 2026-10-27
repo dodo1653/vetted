@@ -1,7 +1,7 @@
 // Same-origin proxy to the relay (Vercel edge). Board and coin answers are cached for 2 s at the CDN, so the free
 // relay sees a few requests a second however many people are watching. Uploads and launches go to the relay directly.
 export const config = { runtime: 'edge' }
-const RELAY = 'https://vetted-relay.trenchcounty.workers.dev/v1/'
+const RELAY = 'https://vetted-relay.vetted-relay.workers.dev/v1/'
 const TTL = { board: 5, coin: 4, vamp: 3, rep: 300 }
 export default async function handler(req) {
   const u = new URL(req.url), path = u.searchParams.get('path')
