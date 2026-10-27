@@ -12,6 +12,7 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
   const recCache = new Map()      // dev -> records (mirror of the store)
   const deepCache = new Map()
   const pendingPins = new Map()   // mints launched here that the feed hasn't seen yet
+  let caughtBase = 0              // copies caught before the last restart (today), from storage
 
   async function rpc(method, params) {
     for (let i = 0; i < 4; i++) {
@@ -91,15 +92,18 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
   }
 
   // ---------------------------------------------------------------- the loop
+  let ticks = 0
   async function tick() {
     for (const c of feed.prune()) await addRecord(c.dev, feed.outcome(c)).catch(() => {})
-    await Promise.all(feed.wantMeta(6).map(fetchMeta))
+    if (++ticks % 30 === 0) await store.put("caught:" + new Date().toISOString().slice(0, 10), caughtBase + feed.caughtSince(86400_000)).catch(() => {})
+    await Promise.all(feed.wantMeta(5).map((c) => fetchMeta(c, feed)))
     for (const [m, at] of pendingPins) { if (feed.coins.has(m)) { feed.pinned.add(m); pendingPins.delete(m) } else if (Date.now() - at > 10 * 60_000) pendingPins.delete(m) }
     if (Date.now() - solAt > 60_000) {
       try { const p = +(await (await fetch("https://api.coinbase.com/v2/prices/SOL-USD/spot")).json()).data.amount; if (p > 0) { sol = p; solAt = Date.now() } } catch {}
     }
   }
-  async function restore() {   // coins launched here survive restarts
+  async function restore() {   // coins launched here and the copy counter survive restarts
+    const day = await store.get("caught:" + new Date().toISOString().slice(0, 10)); caughtBase = day || 0
     const list = (await store.get("pinned")) || []
     for (const m of list) pendingPins.set(m, Date.now())
   }
@@ -131,19 +135,20 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
       const out = await Promise.all(rows.slice(0, n).map(boardRow))
       const here = await Promise.all([...feed.pinned].map((m) => feed.coins.get(m)).filter(Boolean).sort((a, b) => b.at - a.at).slice(0, 30).map(boardRow))
       const tape = feed.tape.slice(-12).map((e) => ({ ...e, img: feed.coins.get(e.m)?.meta?.image || null }))
-      return json({ now: Date.now(), live, sol, coins: out, here, tape })
+      return json({ now: Date.now(), live, sol, coins: out, here, tape, caught1h: feed.caughtSince(3600_000), caught24h: feed.caughtSince(86400_000) + (caughtBase || 0) })
     }
     if (u.pathname === "/v1/coin") {
       const c = feed.coins.get(u.searchParams.get("mint") || "")
       if (!c) return json({ error: "unknown" }, 404)
       const row = await boardRow(c)
-      return json({ ...row, ticks: u.searchParams.get("ticks") ? c.ticks.slice(-3000) : undefined })
+      const copies = []; for (const x of feed.coins.values()) if (x.copyOf && x.copyOf.mint === c.mint) copies.push({ mint: x.mint, symbol: x.symbol, name: x.name, at: x.at, why: x.copyOf.why, img: x.meta?.image || null })
+      return json({ ...row, copies, ticks: u.searchParams.get("ticks") ? c.ticks.slice(-3000) : undefined })
     }
     if (u.pathname === "/v1/rep") {
       const w = u.searchParams.get("wallet"); if (!isKey(w)) return json({ error: "bad wallet" }, 400)
       try { return json(await repFor(w, u.searchParams.get("mint"), !!u.searchParams.get("deep"))) } catch (e) { return json({ error: String(e.message || e) }, 502) }
     }
-    if (u.pathname === "/v1/vamp") return json({ hits: feed.vamp(u.searchParams.get("name"), u.searchParams.get("symbol")) })
+    if (u.pathname === "/v1/vamp") { const ih = u.searchParams.get("img"); return json({ hits: feed.vamp(u.searchParams.get("name"), u.searchParams.get("symbol")), image: ih && /^[a-f0-9]{64}$/.test(ih) ? feed.imageHit(ih) : null }) }
     if (u.pathname === "/v1/upload" && req.method === "POST") {
       try {
         const b = await req.json()
@@ -151,6 +156,8 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
         const name = s(b.name, 32), symbol = s(b.symbol, 10).replace(/^\$+/, ""), description = s(b.description, 600)
         if (!name || !symbol) return json({ error: "name and ticker are required" }, 400)
         const hits = feed.vamp(name, symbol)
+        const ih = /^[a-f0-9]{64}$/.test(String(b.imgHash || "")) ? feed.imageHit(b.imgHash) : null
+        if (ih) return json({ error: `that image belongs to ${ih.name} ($${ih.symbol}), launched ${Math.round((Date.now() - ih.at) / 60000)} min ago. vetted refuses copies.`, image: ih }, 409)
         if (hits.length) return json({ error: `a coin called ${hits[0].name} ($${hits[0].symbol}) launched ${Math.round((Date.now() - hits[0].at) / 60000)} min ago. vetted refuses copies for an hour.`, hits }, 409)
         const m = String(b.image || "").match(/^data:(image\/(png|jpeg|webp|gif));base64,(.+)$/)
         if (!m) return json({ error: "the image must be png, jpg, webp or gif" }, 400)

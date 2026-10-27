@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>vetted</title>
-<meta name="description" content="pump.fun launches with the dev's record on display. Every coin graded from on-chain history. Copies refused for an hour.">
+<meta name="description" content="No more vamps. Launch on pump.fun through vetted and copies of your coin are refused here and caught everywhere: same ticker, name or image within the hour gets marked COPY.">
 <meta property="og:title" content="vetted">
-<meta property="og:description" content="Every pump.fun launch, vetted. The dev's on-chain record on every coin.">
+<meta property="og:description" content="No more vamps. Copies refused here, caught everywhere on pump.fun.">
 <meta property="og:image" content="brand/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="brand/favicon.png">
@@ -40,6 +40,13 @@
   .start:hover { text-decoration: underline; }
   .sub { text-align: center; color: var(--dim); margin: 0 auto 14px; max-width: 640px; font-size: 13.5px; }
   .koth { text-align: center; margin: 18px 0 6px; font: 900 italic 46px/1.1 Impact, "Arial Black", sans-serif; letter-spacing: -1px; background: linear-gradient(180deg, #fff3a6 0%, #ffd23f 40%, #ff8a00 75%, #d94a00 100%); -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 #6b1d00) drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+  .hl { max-width: 720px; margin: 4px auto 0; text-align: center; font-size: 15px; line-height: 1.55; color: #e5e7eb; padding: 0 16px; }
+  .cpy { background: var(--red); color: #000; font-weight: 800; padding: 0 5px; border-radius: 3px; font-size: 13px; }
+  .counter { display: flex; justify-content: center; gap: 12px; margin: 20px 0 4px; flex-wrap: wrap; }
+  .counter div { background: var(--bg2); border-radius: 6px; padding: 10px 18px; min-width: 150px; }
+  .counter b { display: block; font: 800 30px ui-monospace, Menlo, Consolas, monospace; color: var(--grn); }
+  .counter span { font-size: 12px; color: var(--dim); }
+  .kothl { text-align: center; color: var(--dim); font-size: 12px; letter-spacing: .08em; margin: 6px 0 4px; }
   .kothc { display: flex; justify-content: center; margin-bottom: 26px; }
   .search { display: flex; justify-content: center; margin: 10px 0 24px; }
   .search input { width: 384px; max-width: 90vw; background: var(--grn); color: #000; border: 0; border-radius: 4px; padding: 9px 12px; outline: none; }
@@ -60,6 +67,7 @@
   .gr { display: inline-block; padding: 0 5px; border-radius: 3px; color: #000; font-weight: 800; font-size: 11.5px; }
   .gA { background: var(--A); } .gB { background: var(--B); } .gC { background: var(--C); } .gD { background: var(--D); } .gF { background: var(--F); }
   .fg { padding: 0 4px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+  .fcp { background: var(--red); color: #000; font-weight: 800; }
   .fr { background: rgba(248,113,113,.18); color: #fca5a5; } .fa { background: rgba(253,224,71,.15); color: #fde047; } .fgn { background: rgba(134,239,172,.15); color: var(--grn); } .fn { background: rgba(255,255,255,.08); color: var(--dim); }
   .vt { background: var(--grn); color: #000; padding: 0 4px; border-radius: 3px; font-size: 10.5px; font-weight: 800; }
   .empty { grid-column: 1/-1; color: var(--dim); text-align: center; padding: 40px; }
@@ -85,6 +93,8 @@
   .cnav { display: flex; gap: 24px; padding: 20px 24px 4px; }
   .chd { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; padding: 8px 0 10px; color: var(--dim); }
   .chd b { color: var(--ink); font-size: 14px; }
+  .vwarn { background: var(--red); color: #000; padding: 10px 12px; border-radius: 4px; font-weight: 700; margin: 6px 0 10px; } .vwarn a { text-decoration: underline; }
+  .vok { background: rgba(134,239,172,.12); border: 1px solid rgba(134,239,172,.35); padding: 10px 12px; border-radius: 4px; margin: 6px 0 10px; } .vok a { color: var(--grn); }
   .chart { height: 440px; background: #000; border-radius: 2px; overflow: hidden; }
   .chart iframe { width: 100%; height: 100%; border: 0; }
   .tabs2 { display: flex; gap: 6px; margin: 14px 0 8px; }
@@ -126,13 +136,16 @@
 <section class="page" id="pBoard">
   <div class="ca" id="ca"><span>$<span id="caT"></span> CA:</span><code id="caV"></code><button id="caCopy">copy</button><a id="caView"><button>view coin</button></a></div>
   <a class="start" href="#/create">[start a new coin]</a>
-  <p class="sub">every pump.fun launch, vetted: each coin graded A–F from its dev's on-chain record. launch here and your record is on display. copies refused for an hour.</p>
-  <div class="koth">king of the hill</div>
+  <p class="sub">every dev graded A–F from their on-chain record: past dumps, dead coins, serial launches, bundles.</p>
+  <div class="koth">no more vamps</div>
+  <p class="hl">launch on vetted and nobody can launch a copy of your coin here. every copy launched anywhere on pump.fun gets caught too: same ticker, same name or the same image within the hour is marked <span class="cpy">COPY</span> and points back to you, the original.</p>
+  <div class="counter"><div><b id="cDay">-</b><span>vamps caught today</span></div><div><b id="cHour">-</b><span>in the last hour</span></div><div><b id="cLive">-</b><span>launches watched now</span></div></div>
   <div class="kothc" id="koth"></div>
   <div class="search"><input id="q" placeholder="search for token"></div>
   <div class="ctl">
     <select id="sort"><option value="bump">sort: bump order</option><option value="new">sort: creation time</option><option value="mc">sort: market cap</option></select>
     <span class="tog">section: <span data-k="sec" data-v="all" class="on">all</span> <span data-k="sec" data-v="here">vetted</span></span>
+    <span class="tog">show copies: <span data-k="copy" data-v="1">On</span> <span data-k="copy" data-v="0" class="on">Off</span></span>
     <span class="tog">show flagged (D-F): <span data-k="flag" data-v="1" class="on">On</span> <span data-k="flag" data-v="0">Off</span></span>
     <span class="tog">show dev dumps: <span data-k="dump" data-v="1" class="on">On</span> <span data-k="dump" data-v="0">Off</span></span>
     <span class="dim" id="live" style="margin-left:auto;font-size:12.5px"></span>
@@ -153,21 +166,29 @@
     <label>website</label><input id="fWeb" placeholder="(optional)">
     <label>dev buy (SOL)</label><input id="fBuy" type="number" min="0" step="0.01" value="0">
   </div>
-  <div class="pf"><h4>vetted pre-flight</h4>
+  <div class="pf"><h4>anti-vamp pre-flight</h4>
     <div class="ck"><i class="wt" id="cWal">○</i><span id="cWalT">connect the wallet you'll launch from</span></div>
     <div class="ck"><i class="wt" id="cRep">○</i><div><span id="cRepT">your record: shown on every coin you launch here</span><ul class="reasons" id="cRepBox"></ul></div></div>
     <div class="ck"><i class="wt" id="cSym">○</i><span id="cSymT">ticker: checked against the last hour of launches</span></div>
     <div class="ck"><i class="wt" id="cName">○</i><span id="cNameT">name: checked against the last hour of launches</span></div>
-    <div class="ck"><i class="wt" id="cImg">○</i><span id="cImgT">image: hosted by vetted with the coin's metadata</span></div>
+    <div class="ck"><i class="wt" id="cImg">○</i><span id="cImgT">image: checked against every launch in the last hour</span></div>
   </div>
   <button class="go" id="launchBtn" disabled>create coin</button>
-  <div class="tip" id="launchNote">launches on pump.fun. your wallet signs and pays pump.fun's normal launch cost. vetted takes nothing.</div>
+  <div class="tip" id="launchNote">launches on pump.fun. nobody can launch a copy of it on vetted, and copies launched elsewhere get marked COPY and linked to you. your wallet signs and pays pump.fun's normal launch cost; vetted takes nothing.</div>
 </div></section>
 
 <section class="page" id="pCoin"><div class="cnav"><a class="b" href="#/">[go back]</a><a class="b" href="#/how">[how it works]</a></div><div class="cp" id="coinWrap"></div></section>
 
 <section class="page" id="pHow"><div class="how">
   <a class="b" href="#/">[go back]</a>
+  <h2>how vetted stops vamps</h2>
+  <p>a vamp is a copy of a coin that's already running: same ticker, same name or the same picture, launched to steal its buyers. vetted stops them in two ways.</p>
+  <ul>
+    <li><b class="grn">refused here.</b> vetted won't launch a coin whose ticker, name or image matches any pump.fun launch from the last hour, wherever it launched.</li>
+    <li><b class="grn">caught everywhere.</b> vetted watches every pump.fun launch live. a copy launched anywhere is marked <span class="cpy">COPY</span>, hidden from the board by default, and its page points to the original. the original's page lists every copy caught.</li>
+    <li><b class="grn">images too.</b> identical image files are matched by their content hash, so re-uploading someone's art doesn't get past it.</li>
+  </ul>
+  <p class="dim">vetted can't stop someone from launching a copy directly on pump.fun. what it does is make sure nobody mistakes the copy for the original.</p>
   <h2>how vetted grades a dev</h2>
   <p>every grade comes from public on-chain data. vetted watches every pump.fun launch live, records how each one turned out after its first hour, and keeps that record per dev wallet. it never forgets.</p>
   <ul>
@@ -178,12 +199,10 @@
     <li><b class="grn">graduations</b>: past launches that reached the DEX. +15 each</li>
   </ul>
   <p>everyone starts at 60 (C). A is 80+, B 65+, C 50+, D 35+, F below 35. a fresh wallet has no record, which is why every card also shows what the dev is doing on that coin right now.</p>
-  <h2>anti-vamp</h2>
-  <p>vetted refuses a launch whose ticker or name matches any pump.fun launch from the last hour. the original came first.</p>
   <h2>your keys, your coins</h2>
   <p>launches and trades are built by PumpPortal and signed by your own wallet. vetted never holds keys or funds and charges nothing. a good grade is a record, not a promise.</p>
 </div></section>
-<footer>vetted · independent, open data · not affiliated with pump.fun · not financial advice</footer>
+<footer>vetted · no more vamps · independent, open data · not affiliated with pump.fun · not financial advice</footer>
 <div id="toast"></div>
 
 <script type="module">
@@ -241,7 +260,7 @@ function paintTape(tape) {
 }
 
 // ---------------------------------------------------------------- the board
-const st = { sec: 'all', flag: '1', dump: '1' }
+const st = { sec: 'all', flag: '1', dump: '1', copy: '0' }
 document.querySelectorAll('.tog span[data-k]').forEach((s) => (s.onclick = () => { st[s.dataset.k] = s.dataset.v; document.querySelectorAll(`.tog span[data-k="${s.dataset.k}"]`).forEach((x) => x.classList.toggle('on', x === s)); paintBoard() }))
 $('sort').onchange = () => pullBoard()
 $('q').oninput = () => paintBoard()
@@ -249,6 +268,7 @@ let board = null
 const seen = new Set()
 function flags(c) {
   const f = []
+  if (c.copyOf) f.push(['fcp', `COPY of $${c.copyOf.symbol} (${c.copyOf.why})`])
   if (c.devSold) f.push(['fr', 'dev sold'])
   if (c.rep.dumps) f.push(['fr', `dumped ${c.rep.dumps}x before`])
   if (c.rep.dead >= 2) f.push(['fr', `${c.rep.dead} dead coins`])
@@ -266,21 +286,23 @@ function cardHtml(c, big) {
     <div class="mc">market cap: ${sol ? kfmt(c.mc * sol) : kfmt(c.mc) + ' SOL'} <span class="dim">[curve: ${c.prog.toFixed(0)}%]</span></div>
     <div class="dim">buyers: ${c.buyers}</div>
     <div class="nm">${esc(c.name)} (ticker: ${esc(c.symbol)})${c.desc ? ':' : ''} <span style="font-weight:400">${esc((c.desc || '').slice(0, 120))}</span></div>
-    <div class="fl">${flags(c).slice(0, 3).map(([k, t]) => `<span class="fg ${k}">${t}</span>`).join('')}</div></div></div>`
+    <div class="fl">${flags(c).slice(0, c.copyOf ? 4 : 3).map(([k, t]) => `<span class="fg ${k}">${t}</span>`).join('')}</div></div></div>`
 }
 function paintBoard() {
   if (!board) return
   const q = $('q').value.trim().toLowerCase()
   let list = (st.sec === 'here' ? board.here : board.coins).filter(clean)
+  if (st.copy === '0') list = list.filter((c) => !c.copyOf)
   if (st.flag === '0') list = list.filter((c) => !'DF'.includes(c.grade))
   if (st.dump === '0') list = list.filter((c) => !c.devSold && !c.rep.dumps)
   if (q) list = list.filter((c) => (c.name + ' ' + c.symbol + ' ' + c.mint).toLowerCase().includes(q))
   $('grid').innerHTML = list.map((c) => cardHtml(c)).join('') || `<div class="empty">${st.sec === 'here' ? 'nothing launched on vetted yet. be first: [start a new coin]' : 'nothing matches right now'}</div>`
   $('grid').querySelectorAll('.card').forEach((el) => (el.onclick = () => (location.hash = '#/coin/' + el.dataset.m)))
   // king of the hill: furthest along the curve with a passing grade and a dev who hasn't sold
-  const k = board.coins.filter(clean).filter((c) => 'ABC'.includes(c.grade) && !c.devSold).sort((a, b) => b.prog - a.prog)[0]
-  $('koth').innerHTML = k ? cardHtml(k, true) : '<span class="dim">no clean coin on the hill yet</span>'
+  const k = board.coins.filter(clean).filter((c) => 'ABC'.includes(c.grade) && !c.devSold && !c.copyOf).sort((a, b) => b.prog - a.prog)[0]
+  $('koth').innerHTML = k ? `<div><div class="kothl">TOP CLEAN COIN RIGHT NOW</div>${cardHtml(k, true)}</div>` : ''
   $('koth').querySelectorAll('.card').forEach((el) => (el.onclick = () => (location.hash = '#/coin/' + el.dataset.m)))
+  $('cDay').textContent = (board.caught24h ?? 0).toLocaleString(); $('cHour').textContent = (board.caught1h ?? 0).toLocaleString(); $('cLive').textContent = board.coins.length
   $('live').textContent = `${board.coins.length} live · ${board.coins.filter((c) => 'AB'.includes(c.grade)).length} clean · ${board.coins.filter((c) => 'DF'.includes(c.grade)).length} flagged`
 }
 async function pullBoard() {
@@ -289,10 +311,11 @@ async function pullBoard() {
 pullBoard(); setInterval(pullBoard, 3500)
 
 // ---------------------------------------------------------------- create
-let imgData = null
+let imgData = null, imgHash = ''
 $('moreBtn').onclick = () => { const m = $('more'), on = m.style.display === 'none'; m.style.display = on ? '' : 'none'; $('moreBtn').textContent = on ? 'hide more options ↑' : 'show more options ↓' }
 $('imgIn').onchange = async (e) => {
   const f = e.target.files[0]; if (!f) return
+  imgHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await f.arrayBuffer()))).map((x) => x.toString(16).padStart(2, '0')).join('')
   // square, at most 1000 px: small enough to host, sharp enough for pump.fun
   const bmp = await createImageBitmap(f), side = Math.min(bmp.width, bmp.height), size = Math.min(1000, side)
   const cv = document.createElement('canvas'); cv.width = cv.height = size
@@ -314,14 +337,15 @@ async function preflight() {
     })
   }
   const name = $('fName').value.trim(), sym = $('fSym').value.trim().replace(/^\$+/, '')
-  ok = { wal: !!wallet, img: !!imgData, name: false, sym: false }
-  if (name || sym) {
-    const v = await get('vamp', `name=${encodeURIComponent(name)}&symbol=${encodeURIComponent(sym)}`).catch(() => ({ hits: [] }))
+  ok = { wal: !!wallet, img: false, name: false, sym: false }
+  if (name || sym || imgHash) {
+    const v = await get('vamp', `name=${encodeURIComponent(name)}&symbol=${encodeURIComponent(sym)}&img=${imgHash}`).catch(() => ({ hits: [] }))
+    if (imgHash) { ok.img = !v.image; mark('cImg', ok.img ? 'ok' : 'no', ok.img ? 'image: original, not used by any launch in the last hour' : `image: already used by ${esc(v.image.name)} ($${esc(v.image.symbol)}) ${ago(v.image.at)} ago. copies are refused`) }
     const t = v.hits.filter((h) => h.ticker), n = v.hits.filter((h) => h.name_)
     if (sym) { ok.sym = !t.length; mark('cSym', ok.sym ? 'ok' : 'no', ok.sym ? `ticker $${esc(sym)} is free` : `$${esc(t[0].symbol)} launched ${ago(t[0].at)} ago. copies are refused for an hour`) }
     if (name) { ok.name = !n.length; mark('cName', ok.name ? 'ok' : 'no', ok.name ? `name "${esc(name)}" is free` : `"${esc(n[0].name)}" launched ${ago(n[0].at)} ago`) }
   }
-  mark('cImg', imgData ? 'ok' : 'wt', imgData ? 'image ready' : 'image: hosted by vetted with the coin\'s metadata')
+  if (!imgData) mark('cImg', 'wt', 'image: checked against every launch in the last hour')
   $('launchBtn').disabled = !(ok.wal && ok.img && ok.name && ok.sym)
 }
 const NOTE = $('launchNote').textContent
@@ -329,7 +353,7 @@ $('launchBtn').onclick = async () => {
   const b = $('launchBtn'); b.disabled = true
   try {
     $('launchNote').textContent = 'uploading image and metadata…'
-    const up = await post('upload', { name: $('fName').value, symbol: $('fSym').value, description: $('fDesc').value, image: imgData, twitter: $('fX').value, website: $('fWeb').value, telegram: $('fTg').value })
+    const up = await post('upload', { name: $('fName').value, symbol: $('fSym').value, description: $('fDesc').value, image: imgData, imgHash, twitter: $('fX').value, website: $('fWeb').value, telegram: $('fTg').value })
     if (up.error) throw new Error(up.error)
     const { Keypair } = await web3(), mint = Keypair.generate()
     $('launchNote').textContent = 'building the launch on pump.fun…'
@@ -373,6 +397,9 @@ async function paintCoin(first) {
     else $('repCard').innerHTML = '<div class="dim">this coin is outside vetted\'s live window (the last hour of launches, plus every coin launched on vetted)</div>'
   }
   if (!c || c.error) return
+  let vb = $('vampBox'); if (!vb) { vb = document.createElement('div'); vb.id = 'vampBox'; $('coinWrap').firstElementChild.prepend(vb) }
+  vb.innerHTML = c.copyOf ? `<div class="vwarn">COPY · this coin copies <a href="#/coin/${esc(c.copyOf.mint)}">$${esc(c.copyOf.symbol)}</a> (same ${esc(c.copyOf.why)}), which launched first. <a href="#/coin/${esc(c.copyOf.mint)}">[view the original]</a></div>`
+    : c.copies && c.copies.length ? `<div class="vok">ORIGINAL · vetted caught ${c.copies.length} cop${c.copies.length > 1 ? 'ies' : 'y'} of this coin: ${c.copies.slice(0, 6).map((x) => `<a href="#/coin/${esc(x.mint)}">$${esc(x.symbol)}</a> <span class="dim">(${esc(x.why)}, ${ago(x.at)} ago)</span>`).join(' · ')}</div>` : ''
   $('kMc').textContent = 'market cap: ' + (sol ? '$' + kfmt(c.mc * sol) : kfmt(c.mc) + ' SOL')
   $('pg').textContent = c.prog.toFixed(1) + '%'; $('pgBar').style.width = c.prog + '%'
   $('by').textContent = c.buyers; $('fl').innerHTML = `<span class="${c.flow5 >= 0 ? 'grn' : 'red'}">${c.flow5 >= 0 ? '+' : ''}${c.flow5.toFixed(2)} SOL</span>`

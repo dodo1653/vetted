@@ -13,7 +13,7 @@ const KEEP_MS = 65 * 60_000       // launches older than this leave the feed (th
 const MAX = 3000
 
 export class Feed {
-  constructor() { this.coins = new Map(); this.seq = 0; this.events = 0; this.pinned = new Set(); this.tape = [] }   // tape = the latest launches and real trades, for the live bar   // pinned = launched on vetted, kept for good
+  constructor() { this.coins = new Map(); this.seq = 0; this.events = 0; this.pinned = new Set(); this.tape = []; this.imgs = new Map(); this.caught = [] }   // imgs: image sha256 -> first mint; caught: [at, copy mint, original mint, why]   // tape = the latest launches and real trades, for the live bar   // pinned = launched on vetted, kept for good
 
   // one websocket message's logs (a single transaction)
   onLogs(logs, slot) {
@@ -47,6 +47,8 @@ export class Feed {
       meta: null, metaTried: 0, seq: ++this.seq, ticks: [],
     })
     if (this.coins.size > MAX) { for (const k of this.coins.keys()) { if (!this.pinned.has(k)) { this.coins.delete(k); break } } }
+    const prev = this.vamp(name, symbol).filter((h) => h.mint !== mint)[0]
+    if (prev) this.markCopy(this.coins.get(mint), prev.mint, prev.ticker ? "ticker" : "name")
     this.tape.push({ k: "c", w: (creator || user).slice(0, 6), s: symbol.slice(0, 12), m: mint, img: null, at: Date.now() }); if (this.tape.length > 60) this.tape.shift()
   }
   onTrade(b, slot) {
@@ -76,6 +78,22 @@ export class Feed {
   outcome(c) {
     return { m: c.mint, s: c.symbol, t: c.at, g: c.done ? 1 : 0, d: c.devPeak > 0 && c.devTok < c.devPeak * 0.5 ? 1 : 0, p: +(c.peak || 0).toFixed(1), b: c.buyers.size, bu: +((c.bundleTok / 1e9) * 100).toFixed(1) }
   }
+  markCopy(c, orig, why) {
+    if (!c || c.copyOf) return
+    const o = this.coins.get(orig)
+    c.copyOf = { mint: orig, symbol: o ? o.symbol : "", why }
+    this.caught.push([Date.now(), c.mint, orig, why]); if (this.caught.length > 5000) this.caught.splice(0, 1000)
+  }
+  // an image's content hash: identical re-uploads of another coin's art are copies
+  onImage(c, hash) {
+    c.imgHash = hash
+    const first = this.imgs.get(hash)
+    if (first && first !== c.mint && this.coins.has(first) && this.coins.get(first).at < c.at) this.markCopy(c, first, "image")
+    else if (!first) this.imgs.set(hash, c.mint)
+    if (this.imgs.size > 8000) this.imgs.delete(this.imgs.keys().next().value)
+  }
+  imageHit(hash) { const m = this.imgs.get(hash), c = m && this.coins.get(m); return c && Date.now() - c.at < 3600_000 ? { mint: c.mint, symbol: c.symbol, name: c.name, at: c.at } : null }
+  caughtSince(ms) { const cut = Date.now() - ms; return this.caught.filter((x) => x[0] >= cut).length }
   // anti-vamp: launches in the last hour with the same ticker or name (case, spacing and symbols ignored)
   vamp(name, symbol) {
     const norm = (x) => String(x || "").toLowerCase().replace(/[^a-z0-9À-￿]/g, "")
@@ -100,7 +118,7 @@ export class Feed {
       devPct: +((c.devTok / 1e9) * 100).toFixed(2), devSold: c.devPeak > 0 && c.devTok < c.devPeak * 0.5, devBuy: +c.devBuySol.toFixed(3), devSell: +c.devSellSol.toFixed(3),
       bundle: c.bundle.size, bundlePct: +((c.bundleTok / 1e9) * 100).toFixed(2),
       img: c.meta?.image || null, desc: c.meta?.description || "", x: c.meta?.twitter || "", web: c.meta?.website || "", tg: c.meta?.telegram || "",
-      seq: c.seq,
+      seq: c.seq, copyOf: c.copyOf || null,
     }
   }
   // the deck: live coins worth a look (a few real buyers, still on the curve, a sane SOL market cap)
@@ -125,7 +143,7 @@ export class Feed {
 // a coin's launch JSON (image, description, socials) from IPFS; pump.fun's own gateway first
 const GATEWAYS = ["https://pump.mypinata.cloud/ipfs/", "https://gateway.pinata.cloud/ipfs/", "https://dweb.link/ipfs/", "https://ipfs.io/ipfs/"]
 export const cidOf = (u) => (typeof u === "string" ? u.match(/\/ipfs\/([A-Za-z0-9]{40,80})/)?.[1] || u.match(/^ipfs:\/\/([A-Za-z0-9]{40,80})/)?.[1] || null : null)
-export async function fetchMeta(c) {
+export async function fetchMeta(c, feed) {
   c.metaTried++; c.metaAt = Date.now()
   const cid = cidOf(c.uri)
   const urls = cid ? GATEWAYS.map((g) => g + cid) : c.uri.startsWith("http") ? [c.uri] : []
@@ -138,6 +156,13 @@ export async function fetchMeta(c) {
       c.meta = { image: imgCid ? "https://pump.mypinata.cloud/ipfs/" + imgCid : typeof j.image === "string" && j.image.startsWith("https://") ? j.image : null,
         description: String(j.description || "").slice(0, 280), twitter: String(j.twitter || "").slice(0, 200), website: String(j.website || "").slice(0, 200), telegram: String(j.telegram || "").slice(0, 200) }
       c.seq = Date.now()
+      if (c.meta.image && feed) {
+        try {
+          const ir = await fetch(c.meta.image, { signal: AbortSignal.timeout(5000) })
+          const buf = ir.ok ? new Uint8Array(await ir.arrayBuffer()) : null
+          if (buf && buf.length < 4_000_000) feed.onImage(c, Buffer.from(await crypto.subtle.digest("SHA-256", buf)).toString("hex"))
+        } catch {}
+      }
       return
     } catch {}
   }
