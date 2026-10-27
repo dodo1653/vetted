@@ -2,7 +2,7 @@
 // relay sees a few requests a second however many people are watching. Uploads and launches go to the relay directly.
 export const config = { runtime: 'edge' }
 const RELAY = 'https://vetted-relay.trenchcounty.workers.dev/v1/'
-const TTL = { board: 2, coin: 2, vamp: 2, rep: 120 }
+const TTL = { board: 5, coin: 4, vamp: 3, rep: 300 }
 export default async function handler(req) {
   const u = new URL(req.url), path = u.searchParams.get('path')
   if (!TTL[path]) return new Response('{"error":"unknown"}', { status: 404, headers: { 'content-type': 'application/json' } })

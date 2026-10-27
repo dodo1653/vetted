@@ -95,7 +95,7 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
   let ticks = 0
   async function tick() {
     for (const c of feed.prune()) await addRecord(c.dev, feed.outcome(c)).catch(() => {})
-    if (++ticks % 30 === 0) await store.put("caught:" + new Date().toISOString().slice(0, 10), caughtBase + feed.caughtSince(86400_000)).catch(() => {})
+    if (++ticks % 4 === 0) await store.put("caught:" + new Date().toISOString().slice(0, 10), caughtBase + feed.caughtSince(86400_000)).catch(() => {})
     await Promise.all(feed.wantMeta(5).map((c) => fetchMeta(c, feed)))
     for (const [m, at] of pendingPins) { if (feed.coins.has(m)) { feed.pinned.add(m); pendingPins.delete(m) } else if (Date.now() - at > 10 * 60_000) pendingPins.delete(m) }
     if (Date.now() - solAt > 60_000) {
