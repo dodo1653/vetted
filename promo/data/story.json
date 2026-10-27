@@ -1,0 +1,343 @@
+{
+ "KOT": {
+  "orig": {
+   "mint": "Bo4iBcLkvqSb4A7jfNwXSSXkzophnqVEgHCehxKSpump",
+   "name": "Big Kot",
+   "symbol": "KOT",
+   "dev": "7PAwpXMC7BfN8vrJGRV41jkqByVMtmKS8BTXew9uHL14",
+   "at": 1793128240540,
+   "mc": 101.57,
+   "price": 1.015698147508781e-7,
+   "vSol": 57.179825075,
+   "vTok": 562960808.929758,
+   "prog": 64.3,
+   "done": false,
+   "buys": 218,
+   "sells": 165,
+   "buyers": 160,
+   "vol": 189.691,
+   "flow5": 6.351,
+   "devPct": 0,
+   "devSold": false,
+   "devBuy": 0,
+   "devSell": 0,
+   "bundle": 4,
+   "bundlePct": 13.54,
+   "img": "https://metadata.j7tracker.io/images/e65543b7fc174c1d",
+   "desc": "Deployed using https://j7tracker.io",
+   "x": "https://x.com/talkingthomasto/status/2115157432486031452",
+   "web": "",
+   "tg": "",
+   "seq": 43472,
+   "copyOf": null,
+   "here": false,
+   "grade": "D",
+   "score": 45,
+   "rep": {
+    "launches": 0,
+    "dumps": 0,
+    "dead": 0,
+    "grads": 0,
+    "day": 0
+   },
+   "copies": [
+    {
+     "mint": "DdagXAnTnRpLLGM2QQtfKPxHuqxiG5sNmJuTzmwQpump",
+     "symbol": "KOT",
+     "name": "קוט גדול",
+     "at": 1793128332219,
+     "why": "ticker",
+     "img": null
+    },
+    {
+     "mint": "E3ZytDKtKvjv3xrsbVStfmkRPdicH4kJyFaVTifWpump",
+     "symbol": "KOT",
+     "name": "Big Kot",
+     "at": 1793130047590,
+     "why": "ticker",
+     "img": "https://pump.mypinata.cloud/ipfs/bafkreiapnkjhdss3sozkecmkmtgpdhciapldbuudgqx2sj2br352crimzu"
+    },
+    {
+     "mint": "9m3qjhfvzLT5TU13XtaifTj69X1Bh7YmekX7zTBf2qFf",
+     "symbol": "KOT",
+     "name": "Big Kot",
+     "at": 1793130073924,
+     "why": "ticker",
+     "img": null
+    }
+   ],
+   "local": "img/Bo4iBcLkvq"
+  },
+  "copies": [
+   {
+    "mint": "DdagXAnTnRpLLGM2QQtfKPxHuqxiG5sNmJuTzmwQpump",
+    "symbol": "KOT",
+    "name": "קוט גדול",
+    "at": 1793128332219,
+    "why": "ticker",
+    "img": "https://axiomtrading-v2.axiom-cdn.io/Bo4iBcLkvqSb4A7jfNwXSSXkzophnqVEgHCehxKSpump.webp",
+    "buyers": 0,
+    "mc": 717.082,
+    "dev": "6SxcoTY1FAQyxd45oPdGs3PUzQ4YHWLKrh8n4ig5BKZi",
+    "local": "img/DdagXAnTnR"
+   },
+   {
+    "mint": "E3ZytDKtKvjv3xrsbVStfmkRPdicH4kJyFaVTifWpump",
+    "symbol": "KOT",
+    "name": "Big Kot",
+    "at": 1793130047590,
+    "why": "ticker",
+    "img": "https://ipfs.io/ipfs/bafkreiapnkjhdss3sozkecmkmtgpdhciapldbuudgqx2sj2br352crimzu",
+    "buyers": 28,
+    "mc": 39.269,
+    "dev": "AnxiFNsRgxh7Yk4S5Wa7VvmSPKrTzkurdBbUYY2LJ7EV",
+    "local": "img/E3ZytDKtKv"
+   },
+   {
+    "mint": "9m3qjhfvzLT5TU13XtaifTj69X1Bh7YmekX7zTBf2qFf",
+    "symbol": "KOT",
+    "name": "Big Kot",
+    "at": 1793130073924,
+    "why": "ticker",
+    "img": "https://ipfs.io/ipfs/bafkreiapnkjhdss3sozkecmkmtgpdhciapldbuudgqx2sj2br352crimzu",
+    "buyers": 0,
+    "mc": 717.082,
+    "dev": "5ZWiB4f4QDAkttUUhsJnffc8fgUe2HU8ZbDYGbMKGqrg",
+    "local": "img/9m3qjhfvzL"
+   }
+  ]
+ },
+ "TOLANA": {
+  "orig": {
+   "mint": "9KaDUUXWuj93KGCvLCYPUHpicgcS8Mb6rkXZzH2Npump",
+   "name": "TOLANA",
+   "symbol": "TOLANA",
+   "dev": "9omqJqD5t7AbKnDNszLQUtLxCswpqnDv6iGqgFmpaBcm",
+   "at": 1793129888435,
+   "mc": 27.959,
+   "price": 2.795941543727249e-8,
+   "vSol": 30.000226426,
+   "vTok": 1072991904.759458,
+   "prog": 0,
+   "done": false,
+   "buys": 49,
+   "sells": 18,
+   "buyers": 41,
+   "vol": 33.706,
+   "flow5": -2.315,
+   "devPct": 0,
+   "devSold": false,
+   "devBuy": 0,
+   "devSell": 0,
+   "bundle": 1,
+   "bundlePct": 9.62,
+   "img": "https://pump.mypinata.cloud/ipfs/bafybeihkcl64oqe4kuesjkhqfgcxuqeul6xszfyap4zujhsmu7dgwqotze",
+   "desc": "",
+   "x": "https://x.com/kirilyard/status/2115165993530270012?s=46",
+   "web": "",
+   "tg": "",
+   "seq": 43505,
+   "copyOf": null,
+   "here": false,
+   "grade": "C",
+   "score": 60,
+   "rep": {
+    "launches": 0,
+    "dumps": 0,
+    "dead": 0,
+    "grads": 0,
+    "day": 0
+   },
+   "copies": [
+    {
+     "mint": "9ZfHaZ2rTJFKvD123xJDHhUJi2je2CxaG6Ny1k8Ppump",
+     "symbol": "TOLANA",
+     "name": "TOLANA",
+     "at": 1793129903614,
+     "why": "ticker",
+     "img": "https://gmgn.ai/external-res/31939274113a72d67b006fc32d96be7b_v2.webp"
+    },
+    {
+     "mint": "Fchb81zLZQgZiydFQroZvUZpATkNoNGTCtVFXDAfuhM2",
+     "symbol": "TOLANA",
+     "name": "TOLANA",
+     "at": 1793129904216,
+     "why": "ticker",
+     "img": null
+    },
+    {
+     "mint": "Czcsbh4rAAtS7bAemfvJsAhXt2AT6XZ3KmAJLVtXpump",
+     "symbol": "TOLANA",
+     "name": "TOLANA",
+     "at": 1793129997629,
+     "why": "ticker",
+     "img": "https://gmgn.ai/external-res/31939274113a72d67b006fc32d96be7b_v2.webp"
+    },
+    {
+     "mint": "CfZ9mvZMCWapBX1KJ7bFQZzzyuiES9ntHyzqDsCepump",
+     "symbol": "TOLANA",
+     "name": "TOLANA",
+     "at": 1793130346802,
+     "why": "ticker",
+     "img": "https://pump.mypinata.cloud/ipfs/bafybeihkcl64oqe4kuesjkhqfgcxuqeul6xszfyap4zujhsmu7dgwqotze"
+    }
+   ],
+   "local": "img/9KaDUUXWuj"
+  },
+  "copies": [
+   {
+    "mint": "9ZfHaZ2rTJFKvD123xJDHhUJi2je2CxaG6Ny1k8Ppump",
+    "symbol": "TOLANA",
+    "name": "TOLANA",
+    "at": 1793129903614,
+    "why": "ticker",
+    "img": "https://gmgn.ai/external-res/31939274113a72d67b006fc32d96be7b_v2.webp",
+    "buyers": 22,
+    "mc": 29.433,
+    "dev": "JAPV2dnmvQR9W3HYZcmgzNW1f9L2sSqvKzNL39sw7noU"
+   },
+   {
+    "mint": "Fchb81zLZQgZiydFQroZvUZpATkNoNGTCtVFXDAfuhM2",
+    "symbol": "TOLANA",
+    "name": "TOLANA",
+    "at": 1793129904216,
+    "why": "ticker",
+    "img": null,
+    "buyers": 0,
+    "mc": 717.082,
+    "dev": "5ZWiB4f4QDAkttUUhsJnffc8fgUe2HU8ZbDYGbMKGqrg"
+   },
+   {
+    "mint": "Czcsbh4rAAtS7bAemfvJsAhXt2AT6XZ3KmAJLVtXpump",
+    "symbol": "TOLANA",
+    "name": "TOLANA",
+    "at": 1793129997629,
+    "why": "ticker",
+    "img": "https://gmgn.ai/external-res/31939274113a72d67b006fc32d96be7b_v2.webp",
+    "buyers": 170,
+    "mc": 376.82,
+    "dev": "5pos7mWj18ynLeHi2AogqyEamnNJZLuXorzp58b3DVyf"
+   },
+   {
+    "mint": "CfZ9mvZMCWapBX1KJ7bFQZzzyuiES9ntHyzqDsCepump",
+    "symbol": "TOLANA",
+    "name": "TOLANA",
+    "at": 1793130346802,
+    "why": "ticker",
+    "img": "https://pump.mypinata.cloud/ipfs/bafybeihkcl64oqe4kuesjkhqfgcxuqeul6xszfyap4zujhsmu7dgwqotze",
+    "buyers": 29,
+    "mc": 55.593,
+    "dev": "6KLH5mRgFf4vrTiL5mMrC2oiFGTddpPQfzEyH68PE4P7",
+    "local": "img/CfZ9mvZMCW"
+   }
+  ]
+ },
+ "RATIOED": {
+  "orig": {
+   "mint": "DhfeVpo1apuDPbGPhXBxdMxZzAmd6Jq5jhc7nKHhpump",
+   "name": "Ratioed",
+   "symbol": "RATIOED",
+   "dev": "J3gys4FQgtNvvKTkCEt1Lc5J1rkBNqG2NjJTSMvJ7766",
+   "at": 1793129514249,
+   "mc": 29.586,
+   "price": 2.9586364454987802e-8,
+   "vSol": 30.860736758,
+   "vTok": 1043072960.348035,
+   "prog": 3.8,
+   "done": false,
+   "buys": 28,
+   "sells": 8,
+   "buyers": 28,
+   "vol": 9.636,
+   "flow5": 0,
+   "devPct": 0.5,
+   "devSold": false,
+   "devBuy": 0.14,
+   "devSell": 0,
+   "bundle": 0,
+   "bundlePct": 0,
+   "img": "https://pump.mypinata.cloud/ipfs/bafkreiasjw5jyt4eex6acwnbmw5lh434cawtzc7bsalohgpem6elui2ne4",
+   "desc": "ratioed brings a financial layer to the social dynamics already happening on X.",
+   "x": "https://x.com/ratioed_xyz",
+   "web": "https://ratioed.win",
+   "tg": "",
+   "seq": 39551,
+   "copyOf": null,
+   "here": false,
+   "grade": "C",
+   "score": 60,
+   "rep": {
+    "launches": 0,
+    "dumps": 0,
+    "dead": 0,
+    "grads": 0,
+    "day": 0
+   },
+   "copies": [
+    {
+     "mint": "7bAvUfA2rmXNkxeuaNJUDim8tq7syEVptWgMjtq5pump",
+     "symbol": "RATIOED",
+     "name": "Ratioed",
+     "at": 1793129527179,
+     "why": "ticker",
+     "img": "https://pump.mypinata.cloud/ipfs/bafkreiasjw5jyt4eex6acwnbmw5lh434cawtzc7bsalohgpem6elui2ne4"
+    },
+    {
+     "mint": "HUvvJHq33MnvRhizXnisdsUyRTVvcjyCxJ2xZcMUpump",
+     "symbol": "RATIOED",
+     "name": "Ratioed",
+     "at": 1793129549771,
+     "why": "ticker",
+     "img": "https://pump.mypinata.cloud/ipfs/bafkreiasjw5jyt4eex6acwnbmw5lh434cawtzc7bsalohgpem6elui2ne4"
+    },
+    {
+     "mint": "Exh7pgNgb41FsV6pnPFu9tSrp689hvyFxrBTsEybpump",
+     "symbol": "RATIOED",
+     "name": "Ratioed",
+     "at": 1793130292134,
+     "why": "ticker",
+     "img": null
+    }
+   ],
+   "local": "img/DhfeVpo1ap"
+  },
+  "copies": [
+   {
+    "mint": "7bAvUfA2rmXNkxeuaNJUDim8tq7syEVptWgMjtq5pump",
+    "symbol": "RATIOED",
+    "name": "Ratioed",
+    "at": 1793129527179,
+    "why": "ticker",
+    "img": "https://pump.mypinata.cloud/ipfs/bafkreiasjw5jyt4eex6acwnbmw5lh434cawtzc7bsalohgpem6elui2ne4",
+    "buyers": 26,
+    "mc": 28.788,
+    "dev": "8p3xTvTZ7SBT2BZrGjXg2CjQ9AXi9vWVvfGgiDzXQaqC",
+    "local": "img/7bAvUfA2rm"
+   },
+   {
+    "mint": "HUvvJHq33MnvRhizXnisdsUyRTVvcjyCxJ2xZcMUpump",
+    "symbol": "RATIOED",
+    "name": "Ratioed",
+    "at": 1793129549771,
+    "why": "ticker",
+    "img": "https://pump.mypinata.cloud/ipfs/bafkreiasjw5jyt4eex6acwnbmw5lh434cawtzc7bsalohgpem6elui2ne4",
+    "buyers": 18,
+    "mc": 27.959,
+    "dev": "HMoV1PqU7X6XV5BhSgob5qFU8AFoXXgvBNkjhUKaH4C1",
+    "local": "img/HUvvJHq33M"
+   },
+   {
+    "mint": "Exh7pgNgb41FsV6pnPFu9tSrp689hvyFxrBTsEybpump",
+    "symbol": "RATIOED",
+    "name": "Ratioed",
+    "at": 1793130292134,
+    "why": "ticker",
+    "img": "https://ipfs.io/ipfs/bafkreic7eryxx2uh2awbe6gowark3ampg4axnptmsxjgs2nl2yrflr7ho4",
+    "buyers": 3,
+    "mc": 29.079,
+    "dev": "6C6udDwbY3zuNBnB6ML99a8mmVpWphKVWZwacWkN2jkT",
+    "local": "img/Exh7pgNgb4"
+   }
+  ]
+ }
+}

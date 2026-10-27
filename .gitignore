@@ -1,6 +1,8 @@
-node_modules
-relay/node_modules
-.wrangler
-relay/.wrangler
 .dev.vars
+.wrangler
+node_modules
+promo/frames120.log
+promo/frames120/
 promo/out
+relay/.wrangler
+relay/node_modules

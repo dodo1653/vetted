@@ -1,0 +1,302 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>garlic launch film</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* the film: 1920x1080, every frame drawn by renderFrame(t); real data from data/film.js (recorded from garlic's relay, 27 oct 2026) */
+  :root { --bg: #1b1d28; --bg2: #2e303a; --ink: #f5f5f5; --dim: #9ca3af; --grn: #86efac; --blue: #93c5fd; --red: #f87171;
+    --A: #4ade80; --B: #a3e635; --C: #fde047; --D: #fb923c; --F: #f87171; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #0b0c10; color: #f4f4f6; -webkit-font-smoothing: antialiased; }
+  .L { position: absolute; inset: 0; opacity: 0; }
+  .cap { position: absolute; left: 0; right: 0; top: 190px; text-align: center; font: 600 64px/1.12 Inter, sans-serif; letter-spacing: -.035em; }
+  .cap .w { display: inline-block; white-space: pre; text-shadow: 0 2px 24px rgba(0,0,0,.85); }
+  .cap .d { color: #8b8d98; }
+  .cap .r { color: #f87171; }
+  .cap .g { color: #86efac; }
+  .note { position: absolute; left: 0; right: 0; text-align: center; font: 500 24px 'JetBrains Mono', monospace; color: #8b8d98; letter-spacing: .02em; }
+
+  /* the site's own card, scaled up */
+  .site { font: 400 14px/1.45 "Segoe UI", system-ui, Roboto, Arial, sans-serif; color: var(--ink); }
+  .card { display: flex; gap: 12px; padding: 6px; border-radius: 4px; width: 460px; background: transparent; }
+  .card .im { width: 100px; height: 100px; object-fit: cover; flex: none; background: #2e303a; }
+  .card .t { min-width: 0; font-size: 12.5px; }
+  .card .cr { color: var(--blue); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .card .mc { color: var(--grn); }
+  .card .nm { font-weight: 700; margin-top: 3px; }
+  .card .fl { margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; min-height: 17px; }
+  .mono { font-family: ui-monospace, Consolas, monospace; }
+  .dim { color: var(--dim); }
+  .gr { display: inline-block; padding: 0 5px; border-radius: 3px; color: #000; font-weight: 800; font-size: 11.5px; }
+  .gA { background: var(--A); } .gB { background: var(--B); } .gC { background: var(--C); } .gD { background: var(--D); } .gF { background: var(--F); }
+  .fg { padding: 0 4px; border-radius: 3px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .fcp { background: var(--red); color: #000; font-weight: 800; }
+  .fn { background: rgba(255,255,255,.08); color: var(--dim); }
+  .tile { position: absolute; padding: 18px; border-radius: 10px; background: #1b1d28; box-shadow: 0 30px 80px rgba(0,0,0,.55); }
+  .lab { position: absolute; font: 600 20px 'JetBrains Mono', monospace; color: #8b8d98; letter-spacing: .02em; white-space: nowrap; }
+  .lab b { color: #f4f4f6; font-weight: 700; }
+
+  /* stat */
+  #num { position: absolute; left: 0; right: 0; top: 330px; text-align: center; font: 700 220px/1 'JetBrains Mono', monospace; color: #f87171; letter-spacing: -.04em; }
+
+  /* the browser window holding the real site */
+  .win { position: absolute; left: 210px; top: 70px; width: 1500px; height: 860px; border-radius: 14px; overflow: hidden; background: var(--bg); box-shadow: 0 60px 140px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06); transform-origin: 50% 60%; }
+  .bar { height: 40px; background: #12131a; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .bar i { width: 12px; height: 12px; border-radius: 50%; background: #2c2e38; display: block; }
+  .bar .u { margin-left: 16px; flex: 1; max-width: 520px; height: 24px; border-radius: 6px; background: #1d1f29; color: #8b8d98; font: 500 13px Inter; display: flex; align-items: center; padding: 0 12px; }
+  .top { display: flex; align-items: center; gap: 14px; padding: 8px 10px; }
+  .top img { width: 46px; height: 46px; border-radius: 50%; }
+  .top .lk { display: flex; flex-direction: column; font-size: 13px; line-height: 1.35; }
+  .koth { text-align: center; margin: 6px 0 6px; font: 900 italic 46px/1.1 Impact, "Arial Black", sans-serif; letter-spacing: -1px; background: linear-gradient(180deg, #fff3a6 0%, #ffd23f 40%, #ff8a00 75%, #d94a00 100%); -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 #6b1d00) drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+  .counter { display: flex; justify-content: center; gap: 12px; margin: 14px 0 18px; }
+  .counter div { background: var(--bg2); border-radius: 6px; padding: 10px 18px; min-width: 170px; }
+  .counter b { display: block; font: 800 30px ui-monospace, Consolas, monospace; color: var(--grn); }
+  .counter span { font-size: 12px; color: var(--dim); }
+  .ctl { display: flex; gap: 18px; align-items: center; padding: 0 32px 18px; font-size: 14px; }
+  .ctl .sel { background: var(--grn); color: #000; border-radius: 4px; padding: 7px 12px; }
+  .tog span { color: var(--dim); padding: 1px 4px; border-radius: 3px; } .tog span.on { background: var(--grn); color: #000; }
+  .grid { position: relative; padding: 0 32px; height: 330px; }
+  .grid .card { position: absolute; }
+  .form { width: 420px; margin: 40px auto 0; transform: scale(1.75); transform-origin: 50% 0; }
+  .form label { display: block; color: var(--blue); font-weight: 700; margin: 12px 0 5px; font-size: 13.5px; }
+  .form .in { width: 100%; background: var(--bg2); border: 1px solid #4b5563; border-radius: 4px; padding: 8px 10px; height: 38px; }
+  .form .in.foc { border-color: #9ca3af; }
+  .caret { display: inline-block; width: 1px; height: 17px; background: #f5f5f5; vertical-align: -3px; margin-left: 1px; }
+  .pf { margin-top: 20px; border: 1px solid #374151; border-radius: 4px; padding: 10px 12px; }
+  .pf h4 { margin: 0 0 6px; font-size: 13px; color: var(--grn); }
+  .ck { display: flex; gap: 8px; padding: 5px 0; font-size: 13px; }
+  .ck i { flex: none; width: 16px; font-style: normal; text-align: center; }
+  .ok { color: var(--grn); } .no { color: var(--red); } .wt { color: var(--dim); }
+  .go { width: 100%; margin-top: 18px; background: var(--bg2); border: 1px solid #4b5563; color: var(--ink); padding: 9px; border-radius: 4px; text-align: center; opacity: .5; }
+
+  /* garlic */
+  #gimg { position: absolute; right: -120px; top: 0; width: 1080px; height: 1080px; -webkit-mask-image: radial-gradient(closest-side at 52% 50%, #000 62%, transparent 100%); }
+  #gfade { position: absolute; right: 700px; top: 0; width: 460px; height: 1080px; background: linear-gradient(90deg, #0b0c10 10%, rgba(11,12,16,0)); }
+  #gtitle { position: absolute; left: 130px; top: 425px; font: 800 120px/1 Inter; letter-spacing: -.055em; text-align: left; }
+  #gsub { position: absolute; left: 136px; top: 590px; font: 600 34px 'JetBrains Mono', monospace; color: #86efac; letter-spacing: .02em; }
+
+  /* end */
+  #ecoin { position: absolute; left: 50%; top: 250px; width: 300px; height: 300px; margin-left: -150px; border-radius: 50%; object-fit: cover; box-shadow: 0 30px 90px rgba(0,0,0,.6); }
+  #etick { position: absolute; left: 0; right: 0; top: 600px; text-align: center; font: 800 96px/1 Inter; letter-spacing: -.05em; }
+  #eline { position: absolute; left: 0; right: 0; top: 720px; text-align: center; font: 500 34px Inter; color: #8b8d98; letter-spacing: -.01em; }
+  #ex { position: absolute; left: 0; right: 0; top: 800px; text-align: center; font: 500 24px 'JetBrains Mono', monospace; color: #5f616c; }
+  #black { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+</style></head>
+<body>
+<script>window.READY = false</script>
+<script src="data/film.js"></script>
+
+<!-- 1-2: TOLANA, the copy outruns the original -->
+<div class="L" id="s1">
+  <div class="cap" id="c1" data-at="0.35">you launch a coin.</div>
+  <div class="cap" id="c2" data-at="4.35"><span class="d">two minutes later,</span> a copy.</div>
+  <div class="cap" id="c3" data-at="7.6">the copy got <span class="r">170</span> buyers. <span class="d">yours got 41.</span></div>
+  <div class="tile site" id="tO"></div><div class="lab" id="lO"></div>
+  <div class="tile site" id="tC"></div><div class="lab" id="lC"></div>
+</div>
+
+<!-- 3: RATIOED, same ticker, name, picture, even the description -->
+<div class="L" id="s3">
+  <div class="cap" id="c4" data-at="10.35">same ticker. same name. same picture.</div>
+  <div class="tile site" id="r0"></div><div class="lab" id="rl0"></div>
+  <div class="tile site" id="r1"></div><div class="lab" id="rl1"></div>
+  <div class="tile site" id="r2"></div><div class="lab" id="rl2"></div>
+  <div class="tile site" id="r3"></div><div class="lab" id="rl3"></div>
+</div>
+
+<!-- 4: the size of it -->
+<div class="L" id="s4">
+  <div id="num">0</div>
+  <div class="cap" id="c5" data-at="15.4" style="top:590px;font-size:52px">copies launched on pump.fun <span class="d">in one hour.</span></div>
+  <div class="note" id="n5" style="top:690px">counted live by garlic · 27 oct 2026</div>
+</div>
+
+<!-- 5: garlic -->
+<div class="L" id="s5" style="background:#0b0c10">
+  <img id="gimg" src="../brand/garlic_coin.png" alt="">
+  
+  <div class="cap" id="gtitle" data-at="19.75">no more vamps.</div>
+  <div id="gsub">$GARLIC</div>
+</div>
+
+<!-- 6: the board, copies caught and marked -->
+<div class="L" id="s6">
+  <div class="win site" id="win">
+    <div class="bar"><i></i><i></i><i></i><div class="u">garlic · no more vamps</div></div>
+    <div class="top"><img src="../brand/mark.png" alt=""><div class="lk"><span>[twitter]</span><span>[how it works]</span></div><span style="margin-left:auto;color:var(--grn);font-size:13px">[connect wallet]</span></div>
+    <div style="text-align:center;color:var(--grn);font-size:24px;margin-top:2px">[start a new coin]</div>
+    <div class="koth">no more vamps</div>
+    <div class="counter"><div><b id="k1">0</b><span>vamps caught today</span></div><div><b id="k2">0</b><span>in the last hour</span></div><div><b id="k3">0</b><span>launches watched (last hour)</span></div></div>
+    <div class="ctl"><span class="sel">sort: bump order ▾</span><span class="tog">section: <span class="on">all</span> <span>protected</span></span><span class="tog">show copies: <span id="tgOn" class="on">On</span> <span id="tgOff">Off</span></span><span class="tog">show flagged (D-F): <span class="on">On</span> <span>Off</span></span></div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <div class="cap" id="c6" data-at="23.2" style="top:985px;font-size:46px">copies launched anywhere on pump.fun are <span class="r">caught live.</span></div>
+</div>
+
+<!-- 7: launching here: copies refused -->
+<div class="L" id="s7">
+  <div class="win site" id="win2">
+    <div class="bar"><i></i><i></i><i></i><div class="u">garlic · start a new coin</div></div>
+    <div class="form">
+      <label>name</label><div class="in" id="fN"></div>
+      <label>ticker</label><div class="in" id="fT"></div>
+      <div class="pf"><h4>anti-vamp pre-flight</h4>
+        <div class="ck"><i class="ok">✓</i><span>wallet connected</span></div>
+        <div class="ck"><i class="wt" id="kT">○</i><span id="kTt">ticker: checked against the last hour of launches</span></div>
+        <div class="ck"><i class="wt" id="kN">○</i><span id="kNt">name: checked against the last hour of launches</span></div>
+        <div class="ck"><i class="wt">○</i><span>image: checked against every launch in the last hour</span></div>
+      </div>
+      <div class="go">create coin</div>
+    </div>
+  </div>
+  <div class="cap" id="c7" data-at="30.0" style="top:985px;font-size:46px">launch on garlic and <span class="g">nobody can copy you there.</span></div>
+</div>
+
+<!-- 8: end -->
+<div class="L" id="s8">
+  <img id="ecoin" src="../brand/garlic_coin.png" alt="">
+  <div id="etick">$GARLIC</div>
+  <div id="eline">no more vamps.</div>
+  <div id="ex">@garlicdeploys</div>
+</div>
+<div id="black"></div>
+
+<script>
+const F = window.FILM, $ = (id) => document.getElementById(id)
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x))
+const seg = (t, a, b) => clamp((t - a) / (b - a))
+const eo = (x) => 1 - Math.pow(1 - x, 3), eio = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, eo5 = (x) => 1 - Math.pow(1 - x, 5)
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+const kfmt = (v) => v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? '$' + (v / 1e3).toFixed(2) + 'K' : '$' + v.toFixed(0)
+const ph = (sym) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2e303a"/><text x="50" y="58" font-family="Arial" font-weight="700" font-size="22" fill="#9ca3af" text-anchor="middle">${String(sym).slice(0, 4).toUpperCase()}</text></svg>`)
+
+// a card exactly as the site draws it; buyers / ago / flags filled per frame
+function card(c, id) {
+  return `<div class="card"><img class="im" src="${c.img || ph(c.symbol)}" alt="">
+    <div class="t"><div class="cr">Created by <span class="mono">${esc(c.dev)}</span> ${c.grade ? `<span class="gr g${c.grade}">${c.grade}</span>` : ''} <span class="dim" id="${id}a">0s ago</span></div>
+    <div class="mc">market cap: ${kfmt(c.mc * F.sol)} <span class="dim">[curve: ${Math.round(c.prog)}%]</span></div>
+    <div class="dim">buyers: <span id="${id}b">0</span></div>
+    <div class="nm">${esc(c.name)} (ticker: ${esc(c.symbol)})${c.desc ? ':' : ''} <span style="font-weight:400">${esc(c.desc.slice(0, 70))}</span></div>
+    <div class="fl" id="${id}f"></div></div></div>`
+}
+// captions: each word blurs in, the whole line fades out at `out`
+function words(el) { el.innerHTML = el.innerHTML.replace(/(<span[^>]*>)?([^<]+)(<\/span>)?/g, (m, a, txt, b) => (a || '') + txt.split(/(\s+)/).map((w) => /^\s+$/.test(w) ? w : w ? `<span class="w">${w}</span>` : '').join('') + (b || '')) }
+const CAP = {}
+document.querySelectorAll('.cap').forEach((el) => { words(el); CAP[el.id] = { el, at: +el.dataset.at, ws: [...el.querySelectorAll('.w')] } })
+function cap(id, t, out, gap = .085) {
+  const c = CAP[id], o = 1 - seg(t, out, out + .35)
+  c.el.style.opacity = o
+  c.ws.forEach((w, i) => { const p = eo(seg(t, c.at + i * gap, c.at + i * gap + .55)); w.style.opacity = p; w.style.filter = `blur(${(1 - p) * 14}px)`; w.style.transform = `translateY(${(1 - p) * 16}px)` })
+}
+const show = (id, o) => { $(id).style.opacity = o }
+const place = (el, x, y, s = 1, o = 1, extra = '') => { el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.transform = `scale(${s}) ${extra}`; el.style.transformOrigin = '0 0'; el.style.opacity = o }
+const agoS = (sec) => sec < 60 ? Math.floor(sec) + 's ago' : Math.floor(sec / 60) + 'm ago'
+
+// build
+const T = F.tolana, R = F.ratioed
+$('tO').innerHTML = card(T.orig, 'to'); $('tC').innerHTML = card(T.copy, 'tc')
+$('r0').innerHTML = card(R.orig, 'ro'); R.copies.forEach((c, i) => { $('r' + (i + 1)).innerHTML = card(c, 'rc' + i) })
+const G = [R.orig, F.others[0], F.others[1], ...R.copies]
+$('grid').innerHTML = G.map((c, i) => card(c, 'g' + i)).join('')
+// "ago" as the board read at one moment: a minute after the newest of these coins
+const REF = Math.max(...G.map((c) => c.at)) + 60_000
+G.forEach((c, i) => { $('g' + i + 'a').textContent = agoS((REF - c.at) / 1000) })
+$('roa').textContent = agoS((REF - R.orig.at) / 1000); R.copies.forEach((c, i) => { $('rc' + i + 'a').textContent = agoS((REF - c.at) / 1000) })
+
+window.DURATION = 35
+window.renderFrame = (t) => {
+  // ---------------- 1-2  0..9.9
+  const a1 = seg(t, 0, .3) * (1 - seg(t, 9.6, 9.95)); show('s1', a1)
+  cap('c1', t, 4.0); cap('c2', t, 7.25); cap('c3', t, 9.45)
+  {
+    const inO = eo5(seg(t, 1.3, 2.2)), split = eio(seg(t, 4.4, 5.3)), S = 1.72
+    const ox = 960 - 496 * S / 2 - split * 440, oy = 480 + (1 - inO) * 60
+    place($('tO'), ox, oy, S, inO)
+    $('tob').textContent = Math.round(41 * eo(seg(t, 2.0, 3.8)))
+    $('toa').textContent = agoS(Math.max(0, t - 1.3) + (t > 4.4 ? 120 * seg(t, 4.4, 5.0) : 0))
+    const inC = eo5(seg(t, 4.9, 5.7)), cx = 960 - 496 * S / 2 + 440
+    place($('tC'), cx, oy + (1 - inC) * 60, S, inC)
+    $('tcb').textContent = Math.round(170 * eo(seg(t, 5.6, 7.4)))
+    $('tca').textContent = agoS(Math.max(0, t - 4.9))
+    const lo = seg(t, 2.2, 2.6) * (1 - seg(t, 9.4, 9.8)), lc = seg(t, 5.6, 6.0) * (1 - seg(t, 9.4, 9.8))
+    place($('lO'), ox, oy - 52, 1, lo); $('lO').innerHTML = '<b>$TOLANA</b> · the original'
+    place($('lC'), cx, oy - 52, 1, lc); $('lC').innerHTML = '<b>$TOLANA</b> · launched 2 min later'
+    $('tO').style.filter = `saturate(${1 - .7 * seg(t, 7.5, 8.4)}) brightness(${1 - .35 * seg(t, 7.5, 8.4)})`
+    $('tC').style.boxShadow = `0 30px 80px rgba(0,0,0,.55), 0 0 0 ${2 * seg(t, 7.5, 8.0)}px rgba(248,113,113,.9)`
+  }
+  // ---------------- 3  9.9..14.6
+  show('s3', seg(t, 9.85, 10.15) * (1 - seg(t, 14.3, 14.65))); cap('c4', t, 14.1, .12)
+  {
+    const S = 1.1, w = (460 + 36) * S
+    const o = eo5(seg(t, 10.0, 10.8)); place($('r0'), 960 - w / 2, 380 + (1 - o) * 40, S, o)
+    $('rob').textContent = R.orig.buyers; $('rl0').innerHTML = '<b>$RATIOED</b> · the original'; place($('rl0'), 960 - w / 2, 380 - 40, 1, seg(t, 10.6, 11.0))
+    R.copies.forEach((c, i) => {
+      const at = 11.2 + i * .55, p = eo5(seg(t, at, at + .7)), x = 960 - 1.5 * w - 40 + i * (w + 40)
+      place($('r' + (i + 1)), x, 690 + (1 - p) * 50, S, p)
+      $('rc' + i + 'b').textContent = c.buyers
+      place($('rl' + (i + 1)), x, 690 - 40, 1, seg(t, at + .3, at + .7))
+      $('rl' + (i + 1)).innerHTML = `<b>copy</b> · +${c.plus} min${c.same ? ' · <span style="color:#f87171">same image file</span>' : ''}`
+    })
+  }
+  // ---------------- 4  14.6..18.8
+  show('s4', seg(t, 14.6, 14.9) * (1 - seg(t, 18.5, 18.85)))
+  $('num').textContent = Math.round(F.caught1h * eo(seg(t, 14.8, 16.4))).toLocaleString('en-US')
+  $('num').style.filter = `blur(${(1 - seg(t, 14.6, 15.1)) * 16}px)`
+  cap('c5', t, 18.3); show('n5', seg(t, 16.6, 17.1) * (1 - seg(t, 18.3, 18.6)))
+  // ---------------- 5  18.8..23.0
+  show('s5', seg(t, 18.8, 19.4) * (1 - seg(t, 22.7, 23.05)))
+  { const p = seg(t, 18.8, 23.0); $('gimg').style.transform = `scale(${1.08 - .06 * eo(p)}) translateX(${(1 - eo(p)) * 30}px)` }
+  cap('gtitle', t, 22.6, .14); show('gsub', seg(t, 20.6, 21.1) * (1 - seg(t, 22.6, 22.95)))
+  // ---------------- 6  23.0..29.4: the board
+  show('s6', seg(t, 23.0, 23.4) * (1 - seg(t, 29.1, 29.45)))
+  {
+    const p = eio(seg(t, 23.0, 29.4))
+    const z = eio(seg(t, 24.5, 25.4))
+    $('win').style.transformOrigin = `46% ${50 + 30 * z}%`
+    $('win').style.transform = `perspective(2400px) rotateX(${14 - 10 * p}deg) rotateY(${-9 + 6 * p}deg) scale(${.9 + .06 * p + .36 * z})`
+    $('win').style.filter = `blur(${(1 - seg(t, 23.0, 23.6)) * 6}px)`
+    const k = eo(seg(t, 23.3, 24.6))
+    $('k1').textContent = Math.round(F.caught24h * k).toLocaleString('en-US'); $('k2').textContent = Math.round(F.caught1h * k).toLocaleString('en-US'); $('k3').textContent = Math.round(F.watched * k).toLocaleString('en-US')
+    const hide = eio(seg(t, 27.6, 28.3))
+    $('tgOn').className = hide > .5 ? '' : 'on'; $('tgOff').className = hide > .5 ? 'on' : ''
+    G.forEach((c, i) => {
+      const el = $('grid').children[i], col = i % 3, row = Math.floor(i / 3)
+      const isCopy = i >= 3, x = 32 + col * 478, y = row * 150
+      el.style.left = x + 'px'; el.style.top = y + 'px'
+      $('g' + i + 'b').textContent = c.buyers
+      if (isCopy) {
+        const s = seg(t, 25.0 + (i - 3) * .45, 25.3 + (i - 3) * .45)
+        $('g' + i + 'f').innerHTML = s > 0 ? `<span class="fg fcp" style="display:inline-block;transform:scale(${1 + (1 - eo(s)) * .9});opacity:${eo(s)}">COPY of $RATIOED (${c.why})</span>` : ''
+        el.style.opacity = 1 - hide; el.style.transform = `translateY(${-hide * 20}px)`
+        el.style.outline = s > 0 && hide < .5 ? `1px solid rgba(248,113,113,${.6 * eo(s)})` : 'none'
+      } else if (i === 0) {
+        $('g0f').innerHTML = t > 28.1 ? `<span class="fg" style="background:rgba(134,239,172,.15);color:#86efac;opacity:${eo(seg(t, 28.1, 28.5))}">ORIGINAL · ${R.copies.length} copies caught</span>` : ''
+      }
+    })
+  }
+  cap('c6', t, 29.0)
+  // ---------------- 7  29.4..32.6: launching a copy here is refused
+  show('s7', seg(t, 29.4, 29.8) * (1 - seg(t, 32.4, 32.75)))
+  {
+    const p = eio(seg(t, 29.4, 32.6))
+    $('win2').style.transform = `perspective(2400px) rotateX(${8 - 6 * p}deg) rotateY(${7 - 5 * p}deg) scale(${.92 + .05 * p})`
+    const name = 'TOLANA', typed = Math.floor(clamp((t - 29.9) / .09, 0, 6)), typed2 = Math.floor(clamp((t - 30.55) / .09, 0, 6))
+    const car = Math.floor(t * 2.2) % 2 ? '<span class="caret"></span>' : ''
+    $('fN').innerHTML = esc(name.slice(0, typed)) + (t < 30.5 ? car : ''); $('fN').className = 'in' + (t < 30.5 ? ' foc' : '')
+    $('fT').innerHTML = esc(name.slice(0, typed2)) + (t >= 30.5 ? car : ''); $('fT').className = 'in' + (t >= 30.5 ? ' foc' : '')
+    const bad = t > 31.25, badN = t > 30.6
+    $('kN').className = badN ? 'no' : 'wt'; $('kN').textContent = badN ? '✕' : '○'
+    $('kNt').innerHTML = badN ? '"TOLANA" launched 2m ago' : 'name: checked against the last hour of launches'
+    $('kT').className = bad ? 'no' : 'wt'; $('kT').textContent = bad ? '✕' : '○'
+    $('kTt').innerHTML = bad ? '$TOLANA launched 2m ago. copies are refused for an hour' : 'ticker: checked against the last hour of launches'
+  }
+  cap('c7', t, 32.3)
+  // ---------------- 8  32.6..35
+  show('s8', seg(t, 32.7, 33.2))
+  $('ecoin').style.transform = `scale(${.94 + .06 * eo(seg(t, 32.7, 34.0))})`
+  show('etick', eo(seg(t, 33.0, 33.6))); show('eline', eo(seg(t, 33.35, 33.9))); show('ex', eo(seg(t, 33.6, 34.1)))
+  $('black').style.opacity = seg(t, 34.4, 35)
+}
+Promise.all([...document.images].map((i) => i.complete ? 1 : new Promise((r) => { i.onload = i.onerror = r }))).then(() => { window.renderFrame(0); window.READY = true })
+</script>
+</body></html>

@@ -185,11 +185,18 @@ export async function fetchMeta(c, feed) {
         description: String(j.description || "").slice(0, 280), twitter: String(j.twitter || "").slice(0, 200), website: String(j.website || "").slice(0, 200), telegram: String(j.telegram || "").slice(0, 200) }
       c.seq = Date.now()
       if (c.meta.image && feed) {
-        try {
-          const ir = await fetch(c.meta.image, { signal: AbortSignal.timeout(5000) })
-          const buf = ir.ok && /^image\//.test(ir.headers.get("content-type") || "") ? new Uint8Array(await ir.arrayBuffer()) : null
-          if (buf && buf.length < 4_000_000) feed.onImage(c, Buffer.from(await crypto.subtle.digest("SHA-256", buf)).toString("hex"))
-        } catch {}
+        // pump.fun's gateway refuses files pinned elsewhere; Pinata's public one serves them
+        const ic = cidOf(c.meta.image), tries = ic ? [c.meta.image, "https://gateway.pinata.cloud/ipfs/" + ic] : [c.meta.image]
+        for (const u of tries) {
+          try {
+            const ir = await fetch(u, { signal: AbortSignal.timeout(6000) })
+            if (!ir.ok || !/^image\//.test(ir.headers.get("content-type") || "")) continue
+            const buf = new Uint8Array(await ir.arrayBuffer())
+            c.meta.image = u
+            if (buf.length < 4_000_000) feed.onImage(c, Buffer.from(await crypto.subtle.digest("SHA-256", buf)).toString("hex"))
+            break
+          } catch {}
+        }
       }
       return
     } catch {}
