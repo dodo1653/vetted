@@ -1,7 +1,7 @@
 // The project's links. The CA goes in `mint` on launch day.
 export default {
-  name: 'vetted',
-  ticker: 'VETTED',
+  name: 'garlic',
+  ticker: 'GARLIC',
   x: '',
   mint: '',
 }

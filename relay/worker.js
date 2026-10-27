@@ -18,6 +18,7 @@ export class Relay extends DurableObject {
     this.relay = createRelay({
       rpcUrl: env.RPC_URL,
       publicUrl: env.PUBLIC_URL || "https://vetted-relay.trenchcounty.workers.dev",
+      siteUrl: env.SITE_URL || undefined,
       store: { get: (k) => storage.get(k), put: (k, v) => storage.put(k, v) },
       openSocket: (onOpen, onMsg, onClose) => {
         if (this.ws) return

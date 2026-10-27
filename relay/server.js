@@ -1,4 +1,4 @@
-// vetted relay: the live pump.fun feed + dev reputation + anti-vamp + launch metadata hosting + transaction relay.
+// garlic relay: the live pump.fun feed + dev reputation + anti-vamp + launch metadata hosting + transaction relay.
 // Shared by the Node dev server (dev.mjs) and the Cloudflare Worker (worker.js). `store` is persistent key/value
 // storage (Durable Object storage in the Worker, a Map locally).
 import { Feed, PUMP, fetchMeta, devHistory } from "./core.js"
@@ -6,7 +6,7 @@ import { Feed, PUMP, fetchMeta, devHistory } from "./core.js"
 const MAX_RECORDS = 60            // launches kept per dev
 const DEEP_TTL = 6 * 3600_000
 
-export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "https://vettedfun.vercel.app" }) {
+export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "https://vettedvamps.vercel.app" }) {
   const feed = new Feed()
   let sol = 0, solAt = 0, live = false, lastMsg = 0
   const recCache = new Map()      // dev -> records (mirror of the store)
@@ -135,7 +135,7 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
       const out = await Promise.all(rows.slice(0, n).map(boardRow))
       const here = await Promise.all([...feed.pinned].map((m) => feed.coins.get(m)).filter(Boolean).sort((a, b) => b.at - a.at).slice(0, 30).map(boardRow))
       const tape = feed.tape.slice(-12).map((e) => ({ ...e, img: feed.coins.get(e.m)?.meta?.image || null }))
-      return json({ now: Date.now(), live, sol, coins: out, here, tape, caught1h: feed.caughtSince(3600_000), caught24h: feed.caughtSince(86400_000) + (caughtBase || 0) })
+      return json({ now: Date.now(), live, sol, coins: out, here, tape, watched: feed.coins.size, caught1h: feed.caughtSince(3600_000), caught24h: feed.caughtSince(86400_000) + (caughtBase || 0) })
     }
     if (u.pathname === "/v1/coin") {
       const c = feed.coins.get(u.searchParams.get("mint") || "")
@@ -157,8 +157,8 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
         if (!name || !symbol) return json({ error: "name and ticker are required" }, 400)
         const hits = feed.vamp(name, symbol)
         const ih = /^[a-f0-9]{64}$/.test(String(b.imgHash || "")) ? feed.imageHit(b.imgHash) : null
-        if (ih) return json({ error: `that image belongs to ${ih.name} ($${ih.symbol}), launched ${Math.round((Date.now() - ih.at) / 60000)} min ago. vetted refuses copies.`, image: ih }, 409)
-        if (hits.length) return json({ error: `a coin called ${hits[0].name} ($${hits[0].symbol}) launched ${Math.round((Date.now() - hits[0].at) / 60000)} min ago. vetted refuses copies for an hour.`, hits }, 409)
+        if (ih) return json({ error: `that image belongs to ${ih.name} ($${ih.symbol}), launched ${Math.round((Date.now() - ih.at) / 60000)} min ago. garlic refuses copies.`, image: ih }, 409)
+        if (hits.length) return json({ error: `a coin called ${hits[0].name} ($${hits[0].symbol}) launched ${Math.round((Date.now() - hits[0].at) / 60000)} min ago. garlic refuses copies for an hour.`, hits }, 409)
         const m = String(b.image || "").match(/^data:(image\/(png|jpeg|webp|gif));base64,(.+)$/)
         if (!m) return json({ error: "the image must be png, jpg, webp or gif" }, 400)
         const bytes = Uint8Array.from(atob(m[3]), (ch) => ch.charCodeAt(0))
@@ -189,7 +189,7 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
       } catch { return json({ error: "bad request" }, 400) }
     }
     if (u.pathname === "/v1/status") return json({ live, lastMsg, events: feed.events, coins: feed.coins.size, pinned: feed.pinned.size, sol })
-    return json({ ok: true, service: "vetted relay" })
+    return json({ ok: true, service: "garlic relay" })
   }
   return { connect, tick, handle, restore, feed, get live() { return live }, get lastMsg() { return lastMsg } }
 }
