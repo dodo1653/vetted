@@ -3,7 +3,7 @@ $GARLIC / @garlicdeploys
 PROFILE
 name: garlic
 bio: no more vamps. launch on pump.fun through garlic: copies of your coin are refused here and marked COPY everywhere else. pump.fun the way it was at its prime.
-link: (the site, once its final domain is set)
+link: https://garlic-deploy.vercel.app
 avatar: social/x_avatar.png   banner: social/x_banner.png
 
 WARM-UP POSTS (a day or two before launch, one or two a day)
