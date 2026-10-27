@@ -96,14 +96,30 @@ export function createRelay({ rpcUrl, openSocket, store, publicUrl, siteUrl = "h
   async function tick() {
     for (const c of feed.prune()) await addRecord(c.dev, feed.outcome(c)).catch(() => {})
     if (++ticks % 4 === 0) await store.put("caught:" + new Date().toISOString().slice(0, 10), caughtBase + feed.caughtSince(86400_000)).catch(() => {})
+    if (ticks % 8 === 0 && feed.coins.size) await saveSnap().catch(() => {})
     await Promise.all(feed.wantMeta(5).map((c) => fetchMeta(c, feed)))
     for (const [m, at] of pendingPins) { if (feed.coins.has(m)) { feed.pinned.add(m); pendingPins.delete(m) } else if (Date.now() - at > 10 * 60_000) pendingPins.delete(m) }
     if (Date.now() - solAt > 60_000) {
       try { const p = +(await (await fetch("https://api.coinbase.com/v2/prices/SOL-USD/spot")).json()).data.amount; if (p > 0) { sol = p; solAt = Date.now() } } catch {}
     }
   }
-  async function restore() {   // coins launched here and the copy counter survive restarts
+  // the board in storage, 30 coins a key (a stored value is capped), so a woken relay shows launches at once
+  async function saveSnap() {
+    const list = feed.snapshot(300), n = Math.ceil(list.length / 30)
+    for (let i = 0; i < n; i++) await store.put("snap:" + i, list.slice(i * 30, i * 30 + 30))
+    await store.put("snap:n", { n, at: Date.now(), caught: feed.caught.filter((x) => x[0] >= Date.now() - 86400_000).slice(-3000).map((x) => [x[0], x[3]]) })
+  }
+  async function restore() {   // coins launched here, the copy counter and the last board survive restarts
+    try {
+      const head = await store.get("snap:n")
+      if (head && Date.now() - head.at < 65 * 60_000) {
+        const parts = []
+        for (let i = 0; i < head.n; i++) parts.push(...((await store.get("snap:" + i)) || []))
+        feed.restoreSnap(parts, head.caught)
+      }
+    } catch {}
     const day = await store.get("caught:" + new Date().toISOString().slice(0, 10)); caughtBase = day || 0
+    if (feed.caught.length) caughtBase = Math.max(0, caughtBase - feed.caughtSince(86400_000))   // the restored list already counts these
     const list = (await store.get("pinned")) || []
     for (const m of list) pendingPins.set(m, Date.now())
   }

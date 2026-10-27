@@ -150,7 +150,7 @@
     <span class="tog">show dev dumps: <span data-k="dump" data-v="1" class="on">On</span> <span data-k="dump" data-v="0">Off</span></span>
     <span class="dim" id="live" style="margin-left:auto;font-size:12.5px"></span>
   </div>
-  <div class="grid" id="grid"><div class="empty">loading launches…</div></div>
+  <div class="grid" id="grid"><div class="empty">connecting to pump.fun's live feed…</div></div>
 </section>
 
 <section class="page" id="pCreate"><div class="form">
@@ -305,9 +305,26 @@ function paintBoard() {
   $('cDay').textContent = (board.caught24h ?? 0).toLocaleString(); $('cHour').textContent = (board.caught1h ?? 0).toLocaleString(); $('cLive').textContent = (board.watched ?? board.coins.length).toLocaleString()
   $('live').textContent = `${board.coins.length} live · ${board.coins.filter((c) => 'AB'.includes(c.grade)).length} clean · ${board.coins.filter((c) => 'DF'.includes(c.grade)).length} flagged`
 }
+let boardFails = 0
 async function pullBoard() {
-  try { board = await get('board', `n=90&sort=${$('sort').value}`); sol = board.sol || sol; paintTape(board.tape); if (route().p === 'board') paintBoard() } catch {}
+  const q = `n=90&sort=${$('sort').value}`
+  try {
+    let b = await get('board', q).catch(() => null)
+    if (!b || !Array.isArray(b.coins)) b = await fetch(`${RELAY}/v1/board?${q}`, { cache: 'no-store' }).then((r) => r.json()).catch(() => null)   // the proxy failed: ask the relay itself
+    if (!b || !Array.isArray(b.coins)) throw new Error('no board')
+    board = b; boardFails = 0
+    try { localStorage.setItem('garlic.board', JSON.stringify(b)) } catch {}
+  } catch {
+    boardFails++
+    if (!board) { try { board = JSON.parse(localStorage.getItem('garlic.board') || 'null') } catch {} }
+    if (!board && route().p === 'board') $('grid').innerHTML = `<div class="empty">connecting to pump.fun's live feed${boardFails > 2 ? ' (taking longer than usual, retrying)' : ''}…</div>`
+  }
+  if (!board) return
+  sol = board.sol || sol; paintTape(board.tape || []); if (route().p === 'board') paintBoard()
 }
+// the last board this browser saw, drawn before the first request returns
+try { const b = JSON.parse(localStorage.getItem('garlic.board') || 'null'); if (b && Array.isArray(b.coins) && Date.now() - (b.now || 0) < 3600_000) board = b } catch {}
+if (board) { sol = board.sol || sol; paintTape(board.tape || []); if (route().p === 'board') paintBoard() }
 pullBoard(); setInterval(pullBoard, 3500)
 
 // ---------------------------------------------------------------- create

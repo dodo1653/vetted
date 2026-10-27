@@ -2,6 +2,6 @@
 export default {
   name: 'garlic',
   ticker: 'GARLIC',
-  x: '',
+  x: 'https://x.com/garlicdeploys',
   mint: '',
 }

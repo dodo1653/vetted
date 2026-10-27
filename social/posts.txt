@@ -1,0 +1,40 @@
+$GARLIC / @garlicdeploys
+
+PROFILE
+name: garlic
+bio: no more vamps. launch on pump.fun through garlic: copies of your coin are refused here and marked COPY everywhere else. pump.fun the way it was at its prime.
+link: (the site, once its final domain is set)
+avatar: social/x_avatar.png   banner: social/x_banner.png
+
+WARM-UP POSTS (a day or two before launch, one or two a day)
+
+1
+you launch a coin. it starts running.
+four minutes later there are three more with your ticker.
+your buyers split four ways and the chart dies.
+that's a vamp. we're fixing it.
+
+2
+every hour pump.fun gets hundreds of copies: same ticker, same name, same picture, launched minutes after the original.
+we've been watching the feed. the numbers are worse than you think.
+
+3
+the old pump.fun board. green cards, king of the hill, a place you actually wanted to scroll.
+we're bringing it back, without the vamps.
+
+LAUNCH POST (with the video, CA in the reply or the last line)
+
+no more vamps.
+
+garlic is a launchpad on pump.fun built around one thing: your coin stays the original.
+
+launch through garlic and nobody can launch a copy of it there. same ticker, same name or the same image within the hour is refused.
+copies launched anywhere else on pump.fun get caught live, marked COPY, and point back to you.
+
+the old pump.fun look, from when it was at its prime. every dev graded from their on-chain record.
+
+$GARLIC
+CA: <set on launch>
+
+FOLLOW-UP (after launch; use the site's live counter, real numbers only)
+garlic caught <N> vamps today. every one of them now points back to the coin it copied.

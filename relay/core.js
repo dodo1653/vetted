@@ -106,6 +106,34 @@ export class Feed {
     return hits.sort((a, b) => a.at - b.at)
   }
 
+  // the live board survives a restart: board-worthy coins (and every coin launched here), compact
+  snapshot(n = 300) {
+    const pick = [...this.coins.values()].filter((c) => this.pinned.has(c.mint) || (!c.done && c.buyers.size >= 3))
+      .sort((a, b) => (b.ticks.at(-1)?.[0] || b.at) - (a.ticks.at(-1)?.[0] || a.at)).slice(0, n)
+    return pick.map((c) => {
+      const o = {}
+      for (const [k, v] of Object.entries(c)) if (typeof v !== "object" || v === null) o[k] = v
+      o.buyersN = c.buyers.size; o.bundleN = c.bundle.size
+      o.recent = c.recent.slice(-40); o.ticks = c.ticks.slice(-40); o.meta = c.meta; o.copyOf = c.copyOf || null
+      return o
+    })
+  }
+  restoreSnap(list, caught) {
+    const cut = Date.now() - KEEP_MS
+    for (const o of (list || []).filter((x) => x && x.at >= cut).sort((a, b) => a.at - b.at)) {
+      if (this.coins.has(o.mint)) continue
+      const { buyersN = 0, bundleN = 0, ...rest } = o
+      const c = { ...rest, buyers: new Set(), bundle: new Set(), recent: o.recent || [], ticks: o.ticks || [], meta: o.meta || null, copyOf: o.copyOf || undefined, seq: ++this.seq }
+      for (let i = 0; i < buyersN; i++) c.buyers.add("~" + i)      // counts carry over; the wallets themselves aren't kept
+      for (let i = 0; i < bundleN; i++) c.bundle.add("~" + i)
+      if (!c.copyOf) delete c.copyOf
+      this.coins.set(c.mint, c)
+      if (c.imgHash && !this.imgs.has(c.imgHash)) this.imgs.set(c.imgHash, c.mint)
+    }
+    if (Array.isArray(caught)) this.caught = caught.filter((x) => x[0] >= Date.now() - 86400_000).map((x) => [x[0], "", "", x[1]]).concat(this.caught)
+    this.restored = this.coins.size
+  }
+
   // what a card needs; price and market cap in SOL (the page multiplies by the SOL price)
   view(c) {
     const now = Date.now(), price = c.vTok > 0 ? c.vSol / c.vTok : 0
@@ -159,7 +187,7 @@ export async function fetchMeta(c, feed) {
       if (c.meta.image && feed) {
         try {
           const ir = await fetch(c.meta.image, { signal: AbortSignal.timeout(5000) })
-          const buf = ir.ok ? new Uint8Array(await ir.arrayBuffer()) : null
+          const buf = ir.ok && /^image\//.test(ir.headers.get("content-type") || "") ? new Uint8Array(await ir.arrayBuffer()) : null
           if (buf && buf.length < 4_000_000) feed.onImage(c, Buffer.from(await crypto.subtle.digest("SHA-256", buf)).toString("hex"))
         } catch {}
       }
