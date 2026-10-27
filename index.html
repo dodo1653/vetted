@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vetted · every pump.fun launch, vetted</title>
+<meta name="description" content="Launch on pump.fun with the dev's record on display. Every launch graded from on-chain history: dumps, dead coins, serial launches, bundles. Copies refused for an hour.">
+<meta property="og:title" content="vetted">
+<meta property="og:description" content="Every pump.fun launch, vetted. The dev's on-chain record on every coin.">
+<meta property="og:image" content="brand/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="brand/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #08090b; --p1: #0f1114; --p2: #14171b; --line: rgba(255,255,255,.07); --line2: rgba(255,255,255,.12); --ink: #eef0f3; --dim: #9aa1ab; --faint: #5f666f; --ok: #34d399;
+    --A: #34d399; --B: #a3e635; --C: #facc15; --D: #fb923c; --F: #f43f5e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.5 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button, input, textarea { font: inherit; color: inherit; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+  header { position: sticky; top: 0; z-index: 30; background: rgba(8,9,11,.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; gap: 26px; height: 62px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 800 19px Inter; letter-spacing: -.02em; }
+  .logo svg { width: 26px; height: 26px; }
+  nav { display: flex; gap: 4px; }
+  nav a { padding: 7px 12px; border-radius: 8px; color: var(--dim); font-weight: 600; font-size: 14px; }
+  nav a.on, nav a:hover { color: var(--ink); background: rgba(255,255,255,.05); }
+  .hr { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .btn { height: 38px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line2); background: var(--p2); font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn:hover { background: #1b1f24; }
+  .btn.pri { background: var(--ok); color: #03140c; border: 0; }
+  .btn.pri:hover { background: #6ee7b7; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  #ca { display: none; align-items: center; gap: 8px; height: 38px; padding: 0 6px 0 12px; border-radius: 10px; border: 1px solid rgba(52,211,153,.3); background: rgba(52,211,153,.06); font: 600 13px 'JetBrains Mono'; }
+  #ca.on { display: inline-flex; } #ca b { color: var(--ok); }
+  #ca button { height: 26px; border: 0; border-radius: 7px; background: var(--ok); color: #03140c; font-size: 12px; font-weight: 700; padding: 0 10px; cursor: pointer; }
+  main { min-height: calc(100vh - 140px); }
+  .page { display: none; } .page.on { display: block; }
+  /* grade badges */
+  .gr { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; font: 800 17px Inter; color: #05080a; flex: none; }
+  .gr.big { width: 64px; height: 64px; border-radius: 16px; font-size: 34px; }
+  .gA { background: var(--A); } .gB { background: var(--B); } .gC { background: var(--C); } .gD { background: var(--D); } .gF { background: var(--F); color: #fff; }
+  .tag { display: inline-block; padding: 3px 7px; border-radius: 6px; font: 700 10.5px Inter; letter-spacing: .04em; white-space: nowrap; }
+  .tr { background: rgba(244,63,94,.14); color: #fb7185; } .ta { background: rgba(250,204,21,.13); color: #facc15; } .tg { background: rgba(52,211,153,.13); color: var(--ok); } .tn { background: rgba(255,255,255,.06); color: var(--dim); }
+  .up { color: var(--ok); } .dn { color: var(--F); }
+  /* board */
+  .hero { padding: 46px 0 26px; display: flex; align-items: flex-end; gap: 40px; flex-wrap: wrap; }
+  .hero h1 { margin: 0; font: 800 46px/1.05 Inter; letter-spacing: -.04em; max-width: 640px; }
+  .hero h1 em { font-style: normal; color: var(--ok); }
+  .hero p { margin: 14px 0 0; color: var(--dim); font-size: 17px; max-width: 600px; }
+  .stats { margin-left: auto; display: flex; gap: 10px; }
+  .stat { padding: 12px 16px; border-radius: 12px; background: var(--p1); border: 1px solid var(--line); min-width: 130px; }
+  .stat span { display: block; font: 700 10px Inter; letter-spacing: .14em; color: var(--faint); }
+  .stat b { font: 700 22px 'JetBrains Mono'; }
+  .bar { display: flex; gap: 8px; align-items: center; margin: 4px 0 14px; flex-wrap: wrap; }
+  .chip { height: 34px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line2); background: transparent; color: var(--dim); font-weight: 600; font-size: 13px; cursor: pointer; }
+  .chip.on { background: var(--ink); color: #08090b; border-color: var(--ink); }
+  .live { margin-left: auto; font: 600 12.5px 'JetBrains Mono'; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+  .live i.on { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+  .tbl { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--p1); margin-bottom: 40px; }
+  .row { display: grid; grid-template-columns: 44px minmax(0, 1.7fr) 60px 90px 120px 70px 80px minmax(0, 1.6fr); gap: 14px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--line); cursor: pointer; }
+  .row:hover { background: rgba(255,255,255,.025); }
+  .row.h { border-top: 0; cursor: default; font: 700 10.5px Inter; letter-spacing: .12em; color: var(--faint); padding-top: 12px; padding-bottom: 12px; }
+  .row.h:hover { background: none; }
+  .row.new { animation: flash 1.4s ease; }
+  @keyframes flash { from { background: rgba(52,211,153,.1); } }
+  .coin { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .coin img, .coin .ph { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; flex: none; background: #1a1d22; }
+  .coin b { display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .coin small { display: block; color: var(--faint); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .num { font: 600 13.5px 'JetBrains Mono'; }
+  .curve { height: 6px; border-radius: 3px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .curve i { display: block; height: 100%; background: var(--ok); }
+  .flags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .empty { padding: 50px; text-align: center; color: var(--faint); }
+  .here { color: var(--ok); font: 700 10px Inter; letter-spacing: .1em; margin-left: 6px; }
+  /* launch */
+  .two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; padding: 34px 0 60px; align-items: start; }
+  .card { border: 1px solid var(--line); border-radius: 16px; background: var(--p1); padding: 22px; }
+  .card h2 { margin: 0 0 4px; font: 800 26px Inter; letter-spacing: -.03em; }
+  .card h3 { margin: 0 0 14px; font: 700 12px Inter; letter-spacing: .14em; color: var(--faint); }
+  .sub { color: var(--dim); margin: 0 0 18px; }
+  label { display: block; font: 600 13px Inter; color: var(--dim); margin: 14px 0 6px; }
+  input, textarea { width: 100%; background: var(--p2); border: 1px solid var(--line2); border-radius: 10px; padding: 11px 12px; outline: none; }
+  input:focus, textarea:focus { border-color: rgba(52,211,153,.5); }
+  textarea { min-height: 84px; resize: vertical; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .drop { display: flex; align-items: center; gap: 16px; padding: 14px; border: 1px dashed var(--line2); border-radius: 12px; cursor: pointer; }
+  .drop img, .drop .ph { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; background: var(--p2); flex: none; display: grid; place-items: center; color: var(--faint); font-size: 26px; }
+  .check { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; border-top: 1px solid var(--line); }
+  .check:first-of-type { border-top: 0; }
+  .check i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 800 12px Inter; font-style: normal; margin-top: 1px; }
+  .check i.ok { background: rgba(52,211,153,.16); color: var(--ok); } .check i.no { background: rgba(244,63,94,.16); color: #fb7185; } .check i.wait { background: rgba(255,255,255,.07); color: var(--faint); }
+  .check b { display: block; font-weight: 600; } .check small { color: var(--dim); }
+  .reasons { margin: 12px 0 0; padding: 0; list-style: none; }
+  .reasons li { display: flex; gap: 10px; padding: 7px 0; color: var(--dim); font-size: 14px; border-top: 1px solid var(--line); }
+  .reasons li:first-child { border-top: 0; }
+  .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; }
+  .dot.r { background: var(--F); } .dot.a { background: var(--C); } .dot.g { background: var(--ok); } .dot.n { background: var(--faint); }
+  .note { color: var(--faint); font-size: 12.5px; margin-top: 14px; }
+  /* coin page */
+  .chead { display: flex; align-items: center; gap: 18px; padding: 30px 0 20px; flex-wrap: wrap; }
+  .chead img, .chead .ph { width: 76px; height: 76px; border-radius: 18px; object-fit: cover; background: var(--p2); }
+  .chead h2 { margin: 0; font: 800 34px Inter; letter-spacing: -.03em; }
+  .chead .nm { color: var(--dim); }
+  .chead .links { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .chead .links a, .chead .links button { height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid var(--line2); background: var(--p2); font: 600 13px Inter; display: inline-flex; align-items: center; cursor: pointer; }
+  .cgrid { display: grid; grid-template-columns: 1fr 360px; gap: 18px; padding-bottom: 60px; }
+  #chart { width: 100%; height: 360px; display: block; }
+  .kv { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .kv div { padding: 12px; border-radius: 12px; background: var(--p2); }
+  .kv span { display: block; font: 700 10px Inter; letter-spacing: .12em; color: var(--faint); }
+  .kv b { font: 700 17px 'JetBrains Mono'; }
+  .trade .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .trade .tabs button { flex: 1; height: 38px; border-radius: 10px; border: 1px solid var(--line2); background: var(--p2); font-weight: 700; cursor: pointer; }
+  .trade .tabs button.on.b { background: var(--ok); color: #03140c; border: 0; } .trade .tabs button.on.s { background: var(--F); color: #fff; border: 0; }
+  .qs { display: flex; gap: 6px; margin: 8px 0 12px; } .qs button { flex: 1; height: 32px; border-radius: 8px; border: 1px solid var(--line2); background: transparent; color: var(--dim); font: 600 12.5px 'JetBrains Mono'; cursor: pointer; }
+  .hist { font: 500 13px 'JetBrains Mono'; }
+  .hist div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); color: var(--dim); }
+  footer { border-top: 1px solid var(--line); padding: 22px 0 36px; color: var(--faint); font-size: 12.5px; }
+  #toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; visibility: hidden; transition: .25s; z-index: 60; padding: 12px 16px; border-radius: 12px; background: #1b1f24; border: 1px solid var(--line2); box-shadow: 0 10px 40px rgba(0,0,0,.5); max-width: 560px; }
+  #toast.on { opacity: 1; visibility: visible; transform: translate(-50%, 0); } #toast.err { border-color: rgba(244,63,94,.5); }
+  @media (max-width: 1000px) {
+    .row { grid-template-columns: 40px minmax(0, 1fr) 80px 60px; } .row > :nth-child(n+5) { display: none; } .row.h > :nth-child(n+5) { display: none; }
+    .two, .cgrid { grid-template-columns: 1fr; } .stats { margin-left: 0; } .hero h1 { font-size: 34px; } nav { display: none; } .kv { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="logo" href="#/"><svg viewBox="0 0 32 32"><path d="M16 2.5 27 7v8.3c0 6.6-4.5 11.6-11 14.2C9.5 26.9 5 21.9 5 15.3V7z" fill="#34d399"/><path d="m10.5 16 3.8 3.8 7.4-7.8" fill="none" stroke="#04140c" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>vetted</a>
+  <nav><a href="#/" data-p="board">Board</a><a href="#/launch" data-p="launch">Launch</a><a href="#/how" data-p="how">How it works</a></nav>
+  <div class="hr"><div id="ca"><b id="caT"></b><span id="caV"></span><button id="caCopy">Copy</button></div><a class="btn" id="xBtn" style="display:none" target="_blank" rel="noopener">X</a><button class="btn" id="walBtn">Connect wallet</button></div>
+</div></header>
+<main>
+  <!-- board -->
+  <section class="page" id="pBoard"><div class="wrap">
+    <div class="hero"><div><h1>Every pump.fun launch, <em>vetted.</em></h1><p>Each coin is graded from its dev's on-chain record: past dumps, dead coins, serial launches, bundled launch blocks. Launch here and your record is on display. Copies are refused for an hour.</p></div>
+      <div class="stats"><div class="stat"><span>LAUNCHES LIVE</span><b id="sLive">-</b></div><div class="stat"><span>CLEAN (A-B)</span><b id="sClean">-</b></div><div class="stat"><span>FLAGGED (D-F)</span><b id="sBad">-</b></div></div></div>
+    <div class="bar"><button class="chip on" data-f="all">All launches</button><button class="chip" data-f="clean">Clean only (A-B)</button><button class="chip" data-f="nodump">No dev dump</button><button class="chip" data-f="here">Launched on vetted</button><div class="live"><i id="lDot"></i><span id="lTxt">connecting…</span></div></div>
+    <div class="tbl"><div class="row h"><span>DEV</span><span>COIN</span><span>AGE</span><span>MCAP</span><span>CURVE</span><span>BUYERS</span><span>NET 5M</span><span>RECORD</span></div><div id="rows"><div class="empty">Waiting for launches…</div></div></div>
+  </div></section>
+  <!-- launch -->
+  <section class="page" id="pLaunch"><div class="wrap two">
+    <div class="card">
+      <h2>Launch a coin</h2><p class="sub">It launches on pump.fun and trades everywhere pump.fun coins trade. Your wallet signs and pays the normal pump.fun launch cost; vetted takes nothing.</p>
+      <div class="drop" id="drop"><div class="ph" id="imgPrev">+</div><div><b>Coin image</b><div class="note" style="margin:2px 0 0">png, jpg, webp or gif. Square works best.</div></div><input type="file" id="imgIn" accept="image/png,image/jpeg,image/webp,image/gif" hidden></div>
+      <div class="grid2"><div><label>Name</label><input id="fName" maxlength="32" placeholder="Coin name"></div><div><label>Ticker</label><input id="fSym" maxlength="10" placeholder="TICKER"></div></div>
+      <label>Description</label><textarea id="fDesc" maxlength="600" placeholder="What is it?"></textarea>
+      <div class="grid2"><div><label>X (optional)</label><input id="fX" placeholder="https://x.com/…"></div><div><label>Website (optional)</label><input id="fWeb" placeholder="https://…"></div></div>
+      <div class="grid2"><div><label>Telegram (optional)</label><input id="fTg" placeholder="https://t.me/…"></div><div><label>Dev buy in SOL (optional)</label><input id="fBuy" type="number" min="0" step="0.01" value="0"></div></div>
+      <div style="margin-top:20px;display:flex;gap:12px;align-items:center"><button class="btn pri" id="launchBtn" disabled>Launch on pump.fun</button><span class="note" id="launchNote" style="margin:0"></span></div>
+    </div>
+    <div class="card">
+      <h3>PRE-FLIGHT</h3>
+      <div class="check"><i class="wait" id="cWal">1</i><div><b>Wallet</b><small id="cWalT">Connect the wallet you'll launch from.</small></div></div>
+      <div class="check"><i class="wait" id="cRep">2</i><div style="flex:1"><b>Your record</b><small id="cRepT">Your grade is public on every coin you launch here.</small><div id="cRepBox"></div></div></div>
+      <div class="check"><i class="wait" id="cSym">3</i><div><b>Ticker</b><small id="cSymT">Checked against every launch in the last hour.</small></div></div>
+      <div class="check"><i class="wait" id="cName">4</i><div><b>Name</b><small id="cNameT">Checked against every launch in the last hour.</small></div></div>
+      <div class="check"><i class="wait" id="cImg">5</i><div><b>Image</b><small id="cImgT">Hosted by vetted with the coin's metadata.</small></div></div>
+    </div>
+  </div></section>
+  <!-- coin -->
+  <section class="page" id="pCoin"><div class="wrap" id="coinWrap"></div></section>
+  <!-- how -->
+  <section class="page" id="pHow"><div class="wrap" style="padding:40px 0 60px;max-width:860px">
+    <h1 style="font:800 40px Inter;letter-spacing:-.04em;margin:0 0 10px">How vetted grades a dev</h1>
+    <p class="sub" style="font-size:17px">Every grade comes from public on-chain data. vetted watches every pump.fun launch live, records how each one turned out after its first hour, and keeps that record per dev wallet. It never forgets.</p>
+    <div class="card" style="margin:18px 0"><h3>WHAT COUNTS</h3><ul class="reasons">
+      <li><span class="dot r"></span><span><b style="color:var(--ink)">Dev dumps.</b> The dev sold most of their bag within the coin's first hour. -15 each.</span></li>
+      <li><span class="dot r"></span><span><b style="color:var(--ink)">Dead coins.</b> Past launches that never got off the curve. -8 each.</span></li>
+      <li><span class="dot r"></span><span><b style="color:var(--ink)">Serial launching.</b> Three or more launches in 24 hours. -15.</span></li>
+      <li><span class="dot a"></span><span><b style="color:var(--ink)">This coin.</b> Dev already sold (-30), dev holds 20%+ (-10), 10%+ bought by other wallets in the launch block (-15).</span></li>
+      <li><span class="dot g"></span><span><b style="color:var(--ink)">Graduations.</b> Past launches that made it to the DEX. +15 each.</span></li>
+    </ul><p class="note">Everyone starts at 60 (C). A is 80+, B 65+, C 50+, D 35+, F below 35. A fresh wallet has no record, which is why the board also shows what the dev is doing on this coin right now.</p></div>
+    <div class="card" style="margin:18px 0"><h3>ANTI-VAMP</h3><p class="sub" style="margin:0">vetted refuses to launch a coin whose ticker or name matches any pump.fun launch from the last hour. Copies launched elsewhere still show up on the board, but the original came first.</p></div>
+    <div class="card"><h3>YOUR KEYS, YOUR COINS</h3><p class="sub" style="margin:0">Launches and trades are built by PumpPortal and signed by your own wallet. vetted never holds keys or funds and charges nothing. Memecoins are risky; a good grade is a record, not a promise.</p></div>
+  </div></section>
+</main>
+<footer><div class="wrap">vetted · independent, open data. Not affiliated with pump.fun. Grades are computed from public on-chain history and are not financial advice.</div></footer>
+<div id="toast"></div>
+
+<script type="module">
+import P from './project.config.js'
+const $ = (id) => document.getElementById(id)
+const Q = new URLSearchParams(location.search)
+const RELAY = Q.get('relay') || 'https://vetted-relay.trenchcounty.workers.dev'
+const get = (path, q = '') => fetch(Q.get('relay') ? `${RELAY}/v1/${path}?${q}` : `/api/r?path=${path}&${q}`, { cache: 'no-store' }).then((r) => r.json())
+const post = (path, body) => fetch(`${RELAY}/v1/${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json())
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+const usd = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? '$' + (v / 1e3).toFixed(1) + 'K' : '$' + Math.round(v))
+const ago = (t) => { const s = Math.max(0, Math.round((Date.now() - t) / 1000)); return s < 60 ? s + 's' : s < 3600 ? Math.round(s / 60) + 'm' : (s / 3600).toFixed(1) + 'h' }
+const toast = (m, err) => { const t = $('toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._h); t._h = setTimeout(() => (t.className = ''), 4200) }
+const ph = (sym) => `<div class="ph" style="display:grid;place-items:center;font:800 13px Inter;color:#9aa1ab">${esc(String(sym).slice(0, 3).toUpperCase())}</div>`
+const img = (src, sym) => (src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.outerHTML='${ph(sym).replace(/"/g, '&quot;')}'">` : ph(sym))
+if (P.x) { $('xBtn').href = P.x; $('xBtn').style.display = '' }
+if (P.mint) { $('caT').textContent = '$' + P.ticker; $('caV').textContent = P.mint.slice(0, 4) + '…' + P.mint.slice(-4); $('ca').classList.add('on'); $('caCopy').onclick = () => { navigator.clipboard?.writeText(P.mint); $('caCopy').textContent = 'Copied' } }
+let sol = 0
+
+// ---------------------------------------------------------------- wallet
+let wallet = null
+const providers = () => [['Phantom', window.phantom?.solana], ['Solflare', window.solflare], ['Backpack', window.backpack]].filter(([, p]) => p)
+$('walBtn').onclick = async () => {
+  if (wallet) { try { await wallet.p.disconnect?.() } catch {}; wallet = null; paintWallet(); return }
+  const ps = providers(); if (!ps.length) return toast('No Solana wallet found. Install Phantom, Solflare or Backpack.', true)
+  try { const [name, p] = ps[0]; const r = await p.connect(); wallet = { p, name, pk: (r?.publicKey || p.publicKey).toString() }; paintWallet(); toast(name + ' connected') } catch { toast('Wallet connection cancelled.', true) }
+}
+function paintWallet() { $('walBtn').textContent = wallet ? wallet.pk.slice(0, 4) + '…' + wallet.pk.slice(-4) : 'Connect wallet'; if (route().p === 'launch') preflight(true) }
+const web3 = () => import('https://esm.sh/@solana/web3.js@1.98.0?bundle')
+async function portal(body) {
+  const r = await fetch('https://pumpportal.fun/api/trade-local', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+  if (r.status !== 200) throw new Error('Could not build the transaction (' + r.status + ').')
+  const { VersionedTransaction } = await web3(); return VersionedTransaction.deserialize(new Uint8Array(await r.arrayBuffer()))
+}
+
+// ---------------------------------------------------------------- routing
+const route = () => { const h = location.hash.replace(/^#\/?/, ''); const [p, a] = h.split('/'); return { p: p || 'board', a } }
+function go() {
+  const r = route(), pages = { board: 'pBoard', launch: 'pLaunch', coin: 'pCoin', how: 'pHow' }
+  for (const [k, id] of Object.entries(pages)) $(id).classList.toggle('on', k === r.p)
+  document.querySelectorAll('nav a').forEach((a) => a.classList.toggle('on', a.dataset.p === r.p))
+  if (r.p === 'coin') openCoin(r.a); else coinMint = null
+  if (r.p === 'launch') preflight(true)
+  scrollTo(0, 0)
+}
+addEventListener('hashchange', go)
+
+// ---------------------------------------------------------------- board
+let filter = 'all', boardData = null
+const shown = new Set()
+document.querySelectorAll('.chip').forEach((c) => (c.onclick = () => { filter = c.dataset.f; document.querySelectorAll('.chip').forEach((x) => x.classList.toggle('on', x === c)); paintBoard() }))
+function flags(c) {
+  const f = []
+  if (c.devSold) f.push(['tr', 'DEV SOLD'])
+  if (c.rep.dumps) f.push(['tr', `DUMPED ${c.rep.dumps}x BEFORE`])
+  if (c.rep.dead >= 2) f.push(['tr', `${c.rep.dead} DEAD COINS`])
+  if (c.rep.day >= 3) f.push(['ta', `${c.rep.day} LAUNCHES TODAY`])
+  if (c.bundlePct >= 10) f.push(['ta', `BUNDLED ${c.bundlePct.toFixed(0)}%`])
+  if (!c.devSold && c.devPct >= 20) f.push(['ta', `DEV HOLDS ${c.devPct.toFixed(0)}%`])
+  if (c.rep.grads) f.push(['tg', `${c.rep.grads} GRADUATED`])
+  if (!c.rep.launches) f.push(['tn', 'NO HISTORY'])
+  return f
+}
+function rowHtml(c) {
+  const isNew = !shown.has(c.mint); shown.add(c.mint)
+  return `<div class="row${isNew ? ' new' : ''}" data-m="${c.mint}"><span class="gr g${c.grade}" title="score ${c.score}">${c.grade}</span>
+    <div class="coin">${img(c.img, c.symbol)}<div style="min-width:0"><b>$${esc(c.symbol)}${c.here ? '<span class="here">VETTED</span>' : ''}</b><small>${esc(c.name)}</small></div></div>
+    <span class="num">${ago(c.at)}</span><span class="num">${sol ? usd(c.mc * sol) : c.mc.toFixed(0) + ' SOL'}</span>
+    <div><div class="curve"><i style="width:${c.prog}%"></i></div><div class="num" style="font-size:11px;color:var(--faint);margin-top:4px">${c.prog.toFixed(0)}%</div></div>
+    <span class="num">${c.buyers}</span><span class="num ${c.flow5 >= 0 ? 'up' : 'dn'}">${c.flow5 >= 0 ? '+' : ''}${c.flow5.toFixed(2)}</span>
+    <div class="flags">${flags(c).slice(0, 3).map(([k, t]) => `<span class="tag ${k}">${t}</span>`).join('')}</div></div>`
+}
+const SLURS = /n[i1!]gg|f[a@]gg?[o0]t|k[i1]ke|ch[i1]nk|sp[i1]c|r[e3]t[a@]rd|tr[a@]nn/i
+const clean = (c) => !SLURS.test(c.name + ' ' + c.symbol + ' ' + (c.desc || ''))
+function paintBoard() {
+  if (!boardData) return
+  let list = (filter === 'here' ? boardData.here : boardData.coins).filter(clean)
+  if (filter === 'clean') list = list.filter((c) => c.grade === 'A' || c.grade === 'B')
+  if (filter === 'nodump') list = list.filter((c) => !c.devSold && !c.rep.dumps)
+  $('rows').innerHTML = list.map(rowHtml).join('') || `<div class="empty">${filter === 'here' ? 'Nothing launched on vetted yet. Be first.' : 'Nothing matches right now.'}</div>`
+  document.querySelectorAll('#rows .row').forEach((r) => (r.onclick = () => (location.hash = '#/coin/' + r.dataset.m)))
+  const cs = boardData.coins
+  $('sLive').textContent = cs.length; $('sClean').textContent = cs.filter((c) => 'AB'.includes(c.grade)).length; $('sBad').textContent = cs.filter((c) => 'DF'.includes(c.grade)).length
+}
+async function pullBoard() {
+  try {
+    boardData = await get('board', 'n=80'); sol = boardData.sol || sol
+    $('lDot').classList.toggle('on', !!boardData.live); $('lTxt').textContent = boardData.live ? 'live from Solana' : 'reconnecting…'
+    if (route().p === 'board') paintBoard()
+  } catch {}
+}
+pullBoard(); setInterval(pullBoard, 3500)
+
+// ---------------------------------------------------------------- launch
+let imgData = null, checks = {}
+$('drop').onclick = () => $('imgIn').click()
+$('imgIn').onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return
+  // square, max 1000px, webp: small enough to host, sharp enough for pump.fun
+  const bmp = await createImageBitmap(f), side = Math.min(bmp.width, bmp.height), size = Math.min(1000, side)
+  const cv = document.createElement('canvas'); cv.width = cv.height = size
+  cv.getContext('2d').drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, size, size)
+  imgData = f.type === 'image/gif' && f.size < 1_800_000 ? await new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f) }) : cv.toDataURL('image/webp', .9)
+  $('imgPrev').outerHTML = `<img id="imgPrev" src="${imgData}">`
+  preflight()
+}
+let vampT = 0
+;['fName', 'fSym'].forEach((id) => ($(id).oninput = () => { clearTimeout(vampT); vampT = setTimeout(preflight, 350) }))
+const mark = (id, state, text) => { const i = $(id); i.className = state; i.textContent = state === 'ok' ? '✓' : state === 'no' ? '!' : i.textContent; if (text != null) $(id + 'T').innerHTML = text }
+let repFor = null
+async function preflight(repNow) {
+  mark('cWal', wallet ? 'ok' : 'wait', wallet ? `${wallet.name} ${wallet.pk.slice(0, 4)}…${wallet.pk.slice(-4)}` : 'Connect the wallet you\'ll launch from.')
+  if (wallet && repFor !== wallet.pk) {
+    repFor = wallet.pk; mark('cRep', 'wait', 'Reading your on-chain history…'); $('cRepBox').innerHTML = ''
+    get('rep', `wallet=${wallet.pk}&deep=1`).then((r) => {
+      if (r.error) return mark('cRep', 'wait', 'Could not read your history right now.')
+      mark('cRep', r.grade <= 'B' ? 'ok' : r.grade === 'C' ? 'wait' : 'no', `Grade <b style="color:var(--${r.grade})">${r.grade}</b> · score ${r.score}. This is shown on your coin.`)
+      $('cRepBox').innerHTML = `<ul class="reasons">${r.reasons.map(([k, t]) => `<li><span class="dot ${k}"></span><span>${esc(t)}</span></li>`).join('')}</ul>`
+    })
+  }
+  const name = $('fName').value.trim(), sym = $('fSym').value.trim().replace(/^\$+/, '')
+  checks = { wal: !!wallet, img: !!imgData, name: false, sym: false }
+  if (name || sym) {
+    const v = await get('vamp', `name=${encodeURIComponent(name)}&symbol=${encodeURIComponent(sym)}`).catch(() => ({ hits: [] }))
+    const byT = v.hits.filter((h) => h.ticker), byN = v.hits.filter((h) => h.name_)
+    if (sym) { checks.sym = !byT.length; mark('cSym', checks.sym ? 'ok' : 'no', checks.sym ? `$${esc(sym)} is free.` : `$${esc(byT[0].symbol)} launched ${ago(byT[0].at)} ago. Copies are refused for an hour.`) }
+    if (name) { checks.name = !byN.length; mark('cName', checks.name ? 'ok' : 'no', checks.name ? `"${esc(name)}" is free.` : `"${esc(byN[0].name)}" launched ${ago(byN[0].at)} ago.`) }
+  }
+  mark('cImg', imgData ? 'ok' : 'wait', imgData ? 'Ready.' : 'Hosted by vetted with the coin\'s metadata.')
+  $('launchBtn').disabled = !(checks.wal && checks.img && checks.name && checks.sym)
+  $('launchNote').textContent = !wallet ? 'Connect a wallet to launch.' : ''
+}
+$('launchBtn').onclick = async () => {
+  const b = $('launchBtn'); b.disabled = true
+  try {
+    $('launchNote').textContent = 'Uploading the image and metadata…'
+    const up = await post('upload', { name: $('fName').value, symbol: $('fSym').value, description: $('fDesc').value, image: imgData, twitter: $('fX').value, website: $('fWeb').value, telegram: $('fTg').value })
+    if (up.error) throw new Error(up.error)
+    const { Keypair } = await web3(), mint = Keypair.generate()
+    $('launchNote').textContent = 'Building the launch on pump.fun…'
+    const tx = await portal({ publicKey: wallet.pk, action: 'create', tokenMetadata: { name: $('fName').value.trim(), symbol: $('fSym').value.trim().replace(/^\$+/, ''), uri: up.uri }, mint: mint.publicKey.toBase58(), denominatedInSol: 'true', amount: Math.max(0, +$('fBuy').value || 0), slippage: 10, priorityFee: 0.0005, pool: 'pump' })
+    tx.sign([mint])
+    $('launchNote').textContent = 'Sign the launch in your wallet…'
+    const signed = await wallet.p.signTransaction(tx)
+    const raw = btoa(String.fromCharCode(...signed.serialize()))
+    $('launchNote').textContent = 'Sending…'
+    const s = await post('send', { tx: raw }); if (s.error) throw new Error(s.error)
+    await post('launched', { mint: mint.publicKey.toBase58() })
+    toast('Launched. Your coin is live on pump.fun.')
+    location.hash = '#/coin/' + mint.publicKey.toBase58()
+  } catch (e) { toast(String(e.message || e).slice(0, 220), true); $('launchNote').textContent = '' }
+  b.disabled = false
+}
+
+// ---------------------------------------------------------------- coin page
+let coinMint = null, coinTimer = 0, side = 'b'
+async function openCoin(mint) {
+  coinMint = mint; clearInterval(coinTimer)
+  $('coinWrap').innerHTML = '<div class="empty">Loading…</div>'
+  await paintCoin(true)
+  coinTimer = setInterval(() => coinMint === mint && paintCoin(false), 4000)
+}
+async function paintCoin(first) {
+  const mint = coinMint; if (!mint) return
+  const c = await get('coin', `mint=${mint}&ticks=1`).catch(() => null)
+  if (!c || c.error) { $('coinWrap').innerHTML = `<div class="empty">This coin isn't in vetted's live window (the last hour of launches, plus every coin launched on vetted). <a class="up" href="https://pump.fun/coin/${esc(mint)}" target="_blank" rel="noopener">Open it on pump.fun</a></div>`; return }
+  sol = sol || 100
+  if (first) {
+    const links = [c.x && ['X', c.x], c.web && ['Website', c.web], c.tg && ['Telegram', c.tg], ['pump.fun', 'https://pump.fun/coin/' + c.mint]].filter(Boolean)
+    $('coinWrap').innerHTML = `<div class="chead">${img(c.img, c.symbol)}<div><h2>$${esc(c.symbol)}${c.here ? ' <span class="tag tg" style="vertical-align:6px">LAUNCHED ON VETTED</span>' : ''}</h2><div class="nm">${esc(c.name)} · <span class="mono">${c.mint.slice(0, 6)}…${c.mint.slice(-6)}</span></div></div>
+      <div class="links">${links.map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${n}</a>`).join('')}<button id="cpy">Copy CA</button></div></div>
+      <div class="cgrid"><div><div class="card" style="padding:14px"><canvas id="chart"></canvas></div>
+        <div class="kv"><div><span>MARKET CAP</span><b id="kMc"></b></div><div><span>CURVE</span><b id="kPg"></b></div><div><span>BUYERS</span><b id="kBy"></b></div><div><span>NET 5M</span><b id="kFl"></b></div></div>
+        ${c.desc ? `<div class="card" style="margin-top:14px"><h3>ABOUT</h3><div class="sub" style="margin:0;white-space:pre-wrap">${esc(c.desc)}</div></div>` : ''}</div>
+      <div><div class="card" id="repCard"><h3>THE DEV</h3><div class="note">Reading the dev's record…</div></div>
+        <div class="card trade" style="margin-top:14px"><div class="tabs"><button class="b on" data-s="b">Buy</button><button class="s" data-s="s">Sell</button></div>
+          <input id="tAmt" type="number" min="0" step="0.01" value="0.1"><div class="qs" id="qs"></div><button class="btn pri" id="tGo" style="width:100%;justify-content:center"></button>
+          <div class="note">Built by PumpPortal (0.5% fee), signed and sent by your wallet.</div></div></div></div>`
+    $('cpy').onclick = () => { navigator.clipboard?.writeText(c.mint); toast('CA copied') }
+    document.querySelectorAll('.trade .tabs button').forEach((b) => (b.onclick = () => { side = b.dataset.s; paintTrade() }))
+    $('tGo').onclick = () => trade(c.mint)
+    paintTrade()
+    get('rep', `wallet=${c.dev}&mint=${c.mint}&deep=1`).then((r) => paintRep(r, c)).catch(() => {})
+  }
+  $('kMc').textContent = usd(c.mc * sol); $('kPg').textContent = c.prog.toFixed(0) + '%'; $('kBy').textContent = c.buyers
+  $('kFl').textContent = (c.flow5 >= 0 ? '+' : '') + c.flow5.toFixed(2) + ' SOL'; $('kFl').className = c.flow5 >= 0 ? 'up' : 'dn'
+  drawChart(c.ticks || [])
+}
+function paintRep(r, c) {
+  if (!r || r.error) return
+  const hist = (r.deepLaunches || []).filter((x) => x.mint !== c.mint).slice(0, 8)
+  $('repCard').innerHTML = `<h3>THE DEV</h3><div style="display:flex;gap:14px;align-items:center"><span class="gr big g${r.grade}">${r.grade}</span><div><b style="font-size:18px">Score ${r.score}</b><div class="note mono" style="margin:2px 0 0">${esc(c.dev.slice(0, 6))}…${esc(c.dev.slice(-6))}</div></div></div>
+    <ul class="reasons">${r.reasons.map(([k, t]) => `<li><span class="dot ${k}"></span><span>${esc(t)}</span></li>`).join('')}</ul>
+    <div class="hist" style="margin-top:10px">${c.devBuy || c.devSell ? `<div><span>on this coin</span><span>bought ${c.devBuy} · ${c.devSell ? 'sold ' + c.devSell : 'not sold'} SOL</span></div>` : ''}${c.bundle ? `<div><span>launch block</span><span class="${c.bundlePct >= 10 ? 'dn' : ''}">${c.bundle} wallets · ${c.bundlePct.toFixed(1)}%</span></div>` : ''}
+    ${hist.map((x) => `<div><span>$${esc(x.symbol)} · ${ago(x.t)} ago</span><span class="${x.grad ? 'up' : x.dead ? 'dn' : ''}">${x.grad ? 'graduated' : x.dead ? 'dead' : x.mcUsd ? usd(x.mcUsd) : 'live'}</span></div>`).join('')}</div>`
+}
+function paintTrade() {
+  document.querySelectorAll('.trade .tabs button').forEach((b) => b.classList.toggle('on', b.dataset.s === side))
+  $('qs').innerHTML = (side === 'b' ? ['0.05', '0.1', '0.5', '1'] : ['25%', '50%', '100%']).map((v) => `<button data-v="${v}">${v}${side === 'b' ? ' SOL' : ''}</button>`).join('')
+  $('qs').querySelectorAll('button').forEach((b) => (b.onclick = () => ($('tAmt').value = b.dataset.v.replace('%', ''))))
+  $('tAmt').value = side === 'b' ? '0.1' : '100'
+  $('tGo').textContent = side === 'b' ? 'Buy' : 'Sell %'
+  $('tGo').style.background = side === 'b' ? '' : 'var(--F)'
+}
+async function trade(mint) {
+  if (!wallet) return toast('Connect a wallet to trade.', true)
+  try {
+    const amt = +$('tAmt').value; if (!(amt > 0)) return toast('Enter an amount.', true)
+    const tx = await portal({ publicKey: wallet.pk, action: side === 'b' ? 'buy' : 'sell', mint, amount: side === 'b' ? amt : Math.min(100, amt) + '%', denominatedInSol: side === 'b' ? 'true' : 'false', slippage: 15, priorityFee: 0.0003, pool: 'auto' })
+    toast('Sign in your wallet…'); const r = await wallet.p.signAndSendTransaction(tx); toast('Sent: ' + String(r.signature || r).slice(0, 10) + '…')
+  } catch (e) { toast(String(e.message || e).slice(0, 200), true) }
+}
+function drawChart(ticks) {
+  const cv = $('chart'); if (!cv) return
+  const dpr = devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr
+  const g = cv.getContext('2d'); g.scale(dpr, dpr); g.clearRect(0, 0, W, H)
+  if (ticks.length < 2) { g.fillStyle = '#5f666f'; g.font = '13px Inter'; g.fillText('waiting for trades…', 16, 28); return }
+  // 15-second candles of market cap in $
+  const B = 15000, cs = new Map()
+  for (const [t, p] of ticks) { const k = Math.floor(t / B), v = p * 1e9 * sol, c = cs.get(k); if (!c) cs.set(k, [v, v, v, v]); else { c[1] = Math.max(c[1], v); c[2] = Math.min(c[2], v); c[3] = v } }
+  const list = [...cs.entries()].sort((a, b) => a[0] - b[0]).slice(-90).map((x) => x[1])
+  const hi = Math.max(...list.map((c) => c[1])), lo = Math.min(...list.map((c) => c[2])), pad = (hi - lo) * .08 || hi * .05
+  const y = (v) => 14 + (1 - (v - lo + pad) / (hi - lo + 2 * pad)) * (H - 34), bw = (W - 70) / Math.max(30, list.length)
+  g.strokeStyle = 'rgba(255,255,255,.05)'; g.fillStyle = '#5f666f'; g.font = '11px JetBrains Mono'
+  for (let i = 0; i <= 4; i++) { const v = lo - pad + (hi - lo + 2 * pad) * i / 4, yy = y(v); g.beginPath(); g.moveTo(0, yy); g.lineTo(W - 64, yy); g.stroke(); g.fillText(usd(v), W - 60, yy + 4) }
+  list.forEach(([o, h, l, c], i) => {
+    const x = i * bw + bw / 2, up = c >= o; g.strokeStyle = g.fillStyle = up ? '#34d399' : '#f43f5e'
+    g.beginPath(); g.moveTo(x, y(h)); g.lineTo(x, y(l)); g.stroke()
+    const t = Math.min(y(o), y(c)), hh = Math.max(1.5, Math.abs(y(o) - y(c))); g.fillRect(x - bw * .32, t, bw * .64, hh)
+  })
+}
+go()
+</script>
+</body>
+</html>
